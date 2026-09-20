@@ -5,7 +5,7 @@
 <title>당그니 마켓</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="garden-bg"></div>
+<div class="garden-bg" aria-hidden="true"><div class="field field-back">🌱　🥕　🌿　🌼　🥕　🌱　🌿　🥕</div><div class="field field-front">🥕　🌿　🌼　🥕　🌱　🥕　🌿　🌷　🥕</div></div>
 <header>
   <div class="brand"><span>🥕</span><div><b>당그니 마켓</b><small>DANGUNI MARKET</small></div></div>
   <button id="favTop" class="icon-btn" aria-label="찜한 씨앗">♡<i id="favCount">0</i></button>
@@ -17,7 +17,7 @@
   </div>
   <div class="filters">
     <select id="category"><option value="전체">카테고리 전체</option></select>
-    <select id="status"><option value="all">판매상태 전체</option><option value="selling">판매중</option><option value="reserved">예약중</option><option value="soldout">판매완료</option></select>
+    <select id="status"><option value="all">판매상태 전체</option></select>
   </div>
   <div class="summary"><b>🥕 총 <span id="total">0</span>개의 씨앗이 있어요!</b></div>
   <section id="grid" class="grid"></section>

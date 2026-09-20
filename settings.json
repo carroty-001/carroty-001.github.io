@@ -1,0 +1,9 @@
+{
+  "categories": ["기타", "헤어", "상의", "하의", "세트", "신발", "가방", "악세서리", "소품", "배경"],
+  "statuses": [
+    {"value": "selling", "label": "판매중"},
+    {"value": "reserved", "label": "예약중"},
+    {"value": "soldout", "label": "판매완료"}
+  ],
+  "kakaoUrl": "https://open.kakao.com/o/sFesMABh"
+}
