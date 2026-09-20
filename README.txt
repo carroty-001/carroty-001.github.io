@@ -1,1 +1,28 @@
-당그니 마켓 리디자인\nindex.html=문구 / style.css=디자인 / script.js=기능 / products.json=850개 상품 / images=상품 이미지
+당그니 마켓 모바일 버전
+
+1) 상품 데이터: products.json
+2) 상품 이미지: images 폴더
+3) 카카오톡 문의 링크:
+   script.js 맨 아래의
+   window.KAKAO_URL="";
+   따옴표 안에 오픈채팅/문의 링크를 넣어주세요.
+
+예:
+window.KAKAO_URL="https://open.kakao.com/o/여기에주소";
+
+기능:
+- 모바일 2열 상품 목록
+- 검색
+- 카테고리 / 판매상태 필터
+- 찜 기능 (브라우저에 저장)
+- 찜한 씨앗 목록
+- 상품 상세 하단시트
+- 카카오톡 문의 버튼
+- 페이지네이션
+- 당근밭 느낌의 은은한 배경
+
+※ 요청에 따라 하단의 “작은 씨앗이 특별한 하루를 만들어요” 같은 문구는 넣지 않았습니다.
+
+
+카카오톡 문의 링크 적용 완료:
+https://open.kakao.com/o/sFesMABh

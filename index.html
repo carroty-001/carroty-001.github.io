@@ -1,1 +1,48 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>당그니 마켓</title><link rel="stylesheet" href="style.css"></head><body><header><div class="brand">🐰 <b>당그니 마켓 🥕</b><small>오늘도 밭에서 귀여운 씨앗을 찾아볼까요? ♡</small></div></header><main><label class="search">🌱 <input id="q" placeholder="어떤 씨앗을 찾고 있나요?"></label><div class="filters"><div id="cats"></div><select id="status"><option value="all">전체 상태</option><option value="selling">판매중</option><option value="reserved">예약중</option><option value="soldout">판매완료</option></select></div><div class="field"><b>🌱 당그니의 밭</b><span id="msg">오늘은 어떤 씨앗을 발견할까요? ♡</span><small id="count"></small></div><section id="grid"></section><section id="empty" hidden><div>🥕</div><h2>앗, 아직 이 밭에는 없어요!</h2><p>조금 다른 씨앗을 찾아볼까요? 🌱</p></section></main><button id="fav">♡<small>찜한 씨앗</small></button><script src="script.js"></script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>당그니 마켓</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="garden-bg"></div>
+<header>
+  <div class="brand"><span>🥕</span><div><b>당그니 마켓</b><small>DANGUNI MARKET</small></div></div>
+  <button id="favTop" class="icon-btn" aria-label="찜한 씨앗">♡<i id="favCount">0</i></button>
+</header>
+
+<main>
+  <div class="search-row">
+    <label class="search">⌕ <input id="q" placeholder="어떤 씨앗을 찾고 있나요?"></label>
+  </div>
+  <div class="filters">
+    <select id="category"><option value="전체">카테고리 전체</option></select>
+    <select id="status"><option value="all">판매상태 전체</option><option value="selling">판매중</option><option value="reserved">예약중</option><option value="soldout">판매완료</option></select>
+  </div>
+  <div class="summary"><b>🥕 총 <span id="total">0</span>개의 씨앗이 있어요!</b></div>
+  <section id="grid" class="grid"></section>
+  <section id="empty" class="empty" hidden><div>🥕</div><b>앗, 아직 이 밭에는 없어요!</b></section>
+  <nav id="pages" class="pages"></nav>
+</main>
+
+<div id="detail" class="overlay" hidden>
+ <div class="shade" data-close></div>
+ <article class="sheet">
+   <button class="close" data-close>×</button>
+   <div class="hero"><span id="detailBadge"></span><button id="detailHeart" class="heart big"></button><img id="detailImg"></div>
+   <div id="thumbs" class="thumbs"></div>
+   <h2 id="detailName"></h2>
+   <dl><div><dt>카테고리</dt><dd id="detailCat"></dd></div><div><dt>판매 상태</dt><dd id="detailStatus"></dd></div><div><dt>가격</dt><dd id="detailPrice"></dd></div></dl>
+   <div class="actions"><button id="detailFav">♡ 찜하기</button><a id="kakao" target="_blank" rel="noopener">문의하기</a></div>
+ </article>
+</div>
+
+<div id="favPanel" class="overlay" hidden>
+ <div class="shade" data-fav-close></div>
+ <article class="sheet fav-sheet">
+   <div class="panel-head"><button data-fav-close>‹</button><h2>♡ 찜한 씨앗</h2></div>
+   <div id="favList"></div>
+ </article>
+</div>
+<script src="script.js"></script>
+</body></html>
