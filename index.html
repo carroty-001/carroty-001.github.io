@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="당그니의 귀엽고 말랑한 게임 아이템 상점">
+  <title>🥕 DANGNI SHOP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="site-bg">
+    <header class="header">
+      <a class="logo" href="#" aria-label="당그니샵 홈">
+        <span class="logo-carrot">🥕</span>
+        <span>
+          <strong>DANGNI SHOP</strong>
+          <small>GAME ITEM SHOP</small>
+        </span>
+      </a>
+
+      <nav class="nav">
+        <a href="#shop" class="active">SHOP</a>
+        <a href="#guide">GUIDE</a>
+        <a href="#notice">NOTICE</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="favoritesBtn" title="찜한 상품">♡ <span id="favoriteCount">0</span></button>
+        <button class="icon-btn" id="cartBtn" title="문의할 상품">🛒</button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴">☰</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="shop">
+        <div class="hero-copy">
+          <p class="eyebrow">🥕 DANGNI'S LITTLE ITEM FIELD</p>
+          <h1>당그니와 함께하는<br><span>말랑말랑한 아이템 상점</span> ♡</h1>
+          <p>귀여운 게임 아이템을 구경하고<br>마음에 드는 아이템을 찾아보세요!</p>
+          <a class="hero-btn" href="#products">상품 구경하기 →</a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="cloud cloud1">♡</div>
+          <div class="carrot carrot1">🥕</div>
+          <div class="carrot carrot2">🥕</div>
+          <div class="bunny">🐰</div>
+          <div class="sparkle s1">✦</div>
+          <div class="sparkle s2">♡</div>
+          <div class="grass">⌁⌁⌁</div>
+        </div>
+      </section>
+
+      <section class="shop-toolbar" aria-label="상품 필터">
+        <div class="search-wrap">
+          <span>🔎</span>
+          <input id="searchInput" type="search" placeholder="상품 이름, 태그를 검색해보세요" autocomplete="off">
+          <button id="clearSearch" class="clear-search" aria-label="검색어 지우기">×</button>
+        </div>
+
+        <div class="filter-row">
+          <div class="categories" id="categories"></div>
+          <div class="selects">
+            <select id="statusFilter" aria-label="판매 상태">
+              <option value="all">판매 상태</option>
+              <option value="selling">🟢 판매중</option>
+              <option value="reserved">🟡 예약중</option>
+              <option value="soldout">🔴 판매완료</option>
+            </select>
+            <select id="sortSelect" aria-label="정렬">
+              <option value="recommended">추천순</option>
+              <option value="newest">최신순</option>
+              <option value="priceAsc">가격 낮은순</option>
+              <option value="priceDesc">가격 높은순</option>
+              <option value="name">이름순</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="products-area">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">🥕 TODAY'S FIELD</span>
+              <h2 id="productHeading">추천 상품</h2>
+            </div>
+            <span class="result-count" id="resultCount"></span>
+          </div>
+          <div class="products-grid" id="products"></div>
+          <div class="empty-state hidden" id="emptyState">
+            <div>🥕</div>
+            <h3>앗, 아직 이 밭에는 없어요!</h3>
+            <p>검색어를 바꾸거나 다른 카테고리를 골라보세요.</p>
+            <button class="secondary-btn" id="resetFilters">전체 상품 보기</button>
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <div class="side-card recommendation">
+            <div class="side-title">🐰 당그니의 추천 아이템!</div>
+            <div class="mini-list" id="miniRecommendations"></div>
+          </div>
+          <div class="side-card contact">
+            <span class="kakao-icon">💬</span>
+            <div>
+              <strong>구매 문의하기</strong>
+              <p>궁금한 점은 편하게 문의해주세요!</p>
+            </div>
+            <button id="contactBtn" aria-label="구매 문의">›</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="info-section" id="guide">
+        <div class="info-card">
+          <div class="info-title">🥕 구매 방법</div>
+          <ol>
+            <li><b>원하는 상품을 찾아주세요.</b><span>검색과 카테고리 필터를 이용하면 빨라요!</span></li>
+            <li><b>상품 상세에서 문의하기를 눌러주세요.</b><span>상품번호와 이름을 함께 보내주면 좋아요.</span></li>
+            <li><b>거래 가능 여부를 확인해요.</b><span>재고와 거래 시간을 안내해드려요.</span></li>
+            <li><b>거래가 완료되면 상태가 변경돼요.</b><span>판매완료 상품은 목록에서 확인할 수 있어요.</span></li>
+          </ol>
+        </div>
+        <div class="info-card">
+          <div class="info-title">🌱 거래 전 확인사항</div>
+          <ul class="check-list">
+            <li>게임 내 거래 가능 여부를 확인해주세요.</li>
+            <li>거래 가능 시간은 별도 안내해주세요.</li>
+            <li>예약/거래 방식은 문의 시 안내해드려요.</li>
+            <li>단순 변심에 의한 환불은 어려울 수 있어요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="notice-section" id="notice">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">📢 DANGNI NOTICE</span>
+            <h2>공지사항</h2>
+          </div>
+        </div>
+        <div class="notice-list">
+          <button class="notice-item"><span class="notice-badge">공지</span><b>상품 문의 전 상품번호를 확인해주세요!</b><time>2026.09.20</time></button>
+          <button class="notice-item"><span class="notice-badge">공지</span><b>거래 가능 시간 안내</b><time>2026.09.15</time></button>
+          <button class="notice-item"><span class="notice-badge">안내</span><b>사이트 이용 방법 안내</b><time>2026.09.10</time></button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-logo">🥕 DANGNI SHOP</div>
+      <p>당그니와 함께 오늘도 귀여운 아이템 한가득 ♡</p>
+      <small>© 2026 DANGNI SHOP. All rights reserved.</small>
+    </footer>
+  </div>
+
+  <div class="modal hidden" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal aria-label="닫기">×</button>
+      <div class="modal-image-wrap">
+        <div class="modal-image" id="modalImage"><span class="image-fallback large">🥕</span></div>
+        <div class="modal-thumbs" id="modalThumbs"></div>
+      </div>
+      <div class="modal-details">
+        <div class="status-badge" id="modalStatus"></div>
+        <h2 id="modalName"></h2>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="tags" id="modalTags"></div>
+        <p class="modal-description" id="modalDescription"></p>
+        <div class="product-meta">
+          <div><span>상품번호</span><b id="modalId"></b></div>
+          <div><span>카테고리</span><b id="modalCategory"></b></div>
+          <div><span>등록일</span><b id="modalDate"></b></div>
+        </div>
+        <div class="modal-actions">
+          <button class="primary-btn" id="modalContact">💬 구매 문의하기</button>
+          <button class="secondary-btn" id="modalFavorite">♡ 찜하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

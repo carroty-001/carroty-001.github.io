@@ -1,0 +1,231 @@
+[
+  {
+    "id": "C001",
+    "name": "딸기 토끼 원피스",
+    "category": "코스튬",
+    "price": 5000,
+    "status": "selling",
+    "emoji": "👗",
+    "tags": [
+      "코스튬",
+      "토끼",
+      "딸기",
+      "핑크"
+    ],
+    "description": "달콤한 딸기 테마의 토끼 원피스예요. 귀엽고 사랑스러운 분위기로 게임 속에서도 특별해질 수 있어요 ♡",
+    "date": "2026-09-20",
+    "image": "images/C001.png",
+    "images": [
+      "images/C001.png"
+    ]
+  },
+  {
+    "id": "A001",
+    "name": "토끼 귀",
+    "category": "모자",
+    "price": 3000,
+    "status": "selling",
+    "emoji": "🐰",
+    "tags": [
+      "모자",
+      "토끼",
+      "핑크"
+    ],
+    "description": "말랑말랑한 토끼 귀 아이템이에요.",
+    "date": "2026-09-19",
+    "image": "images/A001.png",
+    "images": [
+      "images/A001.png"
+    ]
+  },
+  {
+    "id": "H001",
+    "name": "핑크 리본 헤어",
+    "category": "헤어",
+    "price": 4000,
+    "status": "reserved",
+    "emoji": "🎀",
+    "tags": [
+      "헤어",
+      "리본",
+      "핑크"
+    ],
+    "description": "핑크 리본 포인트가 들어간 사랑스러운 헤어 아이템이에요.",
+    "date": "2026-09-18",
+    "image": "images/H001.png",
+    "images": [
+      "images/H001.png"
+    ]
+  },
+  {
+    "id": "A002",
+    "name": "토끼 인형 가방",
+    "category": "악세사리",
+    "price": 2500,
+    "status": "selling",
+    "emoji": "🧸",
+    "tags": [
+      "악세사리",
+      "가방",
+      "토끼"
+    ],
+    "description": "작은 토끼 인형을 품은 귀여운 가방이에요.",
+    "date": "2026-09-17",
+    "image": "images/A002.png",
+    "images": [
+      "images/A002.png"
+    ]
+  },
+  {
+    "id": "C002",
+    "name": "겨울 눈꽃 코스튬",
+    "category": "코스튬",
+    "price": 6000,
+    "status": "soldout",
+    "emoji": "❄️",
+    "tags": [
+      "코스튬",
+      "겨울",
+      "하늘"
+    ],
+    "description": "눈꽃처럼 포근한 겨울 분위기의 코스튬이에요.",
+    "date": "2026-09-16",
+    "image": "images/C002.png",
+    "images": [
+      "images/C002.png"
+    ]
+  },
+  {
+    "id": "A003",
+    "name": "하트 안경",
+    "category": "악세사리",
+    "price": 2000,
+    "status": "selling",
+    "emoji": "🩷",
+    "tags": [
+      "악세사리",
+      "안경",
+      "핑크"
+    ],
+    "description": "하트 모양 프레임이 포인트인 깜찍한 안경이에요.",
+    "date": "2026-09-15",
+    "image": "images/A003.png",
+    "images": [
+      "images/A003.png"
+    ]
+  },
+  {
+    "id": "C003",
+    "name": "당근 마을 원피스",
+    "category": "코스튬",
+    "price": 4500,
+    "status": "selling",
+    "emoji": "🥕",
+    "tags": [
+      "코스튬",
+      "당근",
+      "오렌지"
+    ],
+    "description": "당그니샵의 시그니처 당근 테마 원피스예요.",
+    "date": "2026-09-14",
+    "image": "images/C003.png",
+    "images": [
+      "images/C003.png"
+    ]
+  },
+  {
+    "id": "A004",
+    "name": "당근 미니백",
+    "category": "악세사리",
+    "price": 2200,
+    "status": "selling",
+    "emoji": "🥕",
+    "tags": [
+      "가방",
+      "당근",
+      "악세사리"
+    ],
+    "description": "작은 당근 모양의 귀여운 포인트 백이에요.",
+    "date": "2026-09-13",
+    "image": "images/A004.png",
+    "images": [
+      "images/A004.png"
+    ]
+  },
+  {
+    "id": "F001",
+    "name": "말랑 복숭아 얼굴",
+    "category": "얼굴",
+    "price": 3500,
+    "status": "selling",
+    "emoji": "🍑",
+    "tags": [
+      "얼굴",
+      "복숭아",
+      "말랑"
+    ],
+    "description": "말랑하고 포근한 인상을 만들어주는 얼굴 아이템이에요.",
+    "date": "2026-09-12",
+    "image": "images/F001.png",
+    "images": [
+      "images/F001.png"
+    ]
+  },
+  {
+    "id": "S001",
+    "name": "딸기 리본 슈즈",
+    "category": "신발",
+    "price": 2800,
+    "status": "selling",
+    "emoji": "👟",
+    "tags": [
+      "신발",
+      "딸기",
+      "리본"
+    ],
+    "description": "딸기 리본으로 포인트를 준 귀여운 신발이에요.",
+    "date": "2026-09-11",
+    "image": "images/S001.png",
+    "images": [
+      "images/S001.png"
+    ]
+  },
+  {
+    "id": "H002",
+    "name": "당근 방울 헤어",
+    "category": "헤어",
+    "price": 4200,
+    "status": "selling",
+    "emoji": "🥕",
+    "tags": [
+      "헤어",
+      "당근",
+      "방울"
+    ],
+    "description": "당근 장식이 살짝 보이는 발랄한 헤어예요.",
+    "date": "2026-09-10",
+    "image": "images/H002.png",
+    "images": [
+      "images/H002.png"
+    ]
+  },
+  {
+    "id": "E001",
+    "name": "토끼 리본 꼬리",
+    "category": "기타",
+    "price": 1800,
+    "status": "reserved",
+    "emoji": "🐇",
+    "tags": [
+      "토끼",
+      "리본",
+      "꼬리"
+    ],
+    "description": "뒤에서 살짝 보이는 토끼 리본 꼬리 포인트예요.",
+    "date": "2026-09-09",
+    "image": "images/E001.png",
+    "images": [
+      "images/E001.png"
+    ]
+  }
+]
