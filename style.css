@@ -296,3 +296,123 @@ main:before{display:none}
   .summary b{font-size:15px}
   .shop-notice b{font-size:12px}
 }
+
+/* ===== PC 쇼핑몰 레이아웃 교정: 좌우 빈 공간 제거 + 헤더/배경 재디자인 ===== */
+
+/* PC에서 콘텐츠가 가운데 좁게 갇히지 않도록 */
+header .inner{
+  width:min(94vw,1680px) !important;
+  max-width:none !important;
+  margin:0 auto !important;
+}
+main{
+  width:min(94vw,1680px) !important;
+  max-width:none !important;
+  margin:26px auto 80px !important;
+  padding:24px 26px 34px !important;
+}
+
+/* 전체 페이지 배경을 '쇼핑몰 배경'처럼 레이어링 */
+body{
+  background:
+    radial-gradient(circle at 0% 24%,rgba(255,196,170,.20) 0 230px,transparent 231px),
+    radial-gradient(circle at 100% 18%,rgba(255,218,178,.25) 0 260px,transparent 261px),
+    radial-gradient(circle at 4% 80%,rgba(186,216,157,.20) 0 250px,transparent 251px),
+    radial-gradient(circle at 97% 78%,rgba(205,226,177,.22) 0 280px,transparent 281px),
+    linear-gradient(135deg,#fff7ef 0%,#fffaf5 43%,#f7f5e8 100%) !important;
+}
+.garden-bg{
+  background:
+    radial-gradient(circle at 8% 19%,rgba(255,255,255,.70) 0 70px,transparent 71px),
+    radial-gradient(circle at 91% 27%,rgba(255,226,206,.36) 0 150px,transparent 151px),
+    radial-gradient(circle at 12% 83%,rgba(202,226,177,.31) 0 170px,transparent 171px),
+    linear-gradient(180deg,rgba(255,247,239,.86),rgba(250,247,232,.83)) !important;
+}
+/* 좌우에 띨롱 비는 장식 레이어는 PC에서 제거 */
+.side-garden,.field-back,.field-front{display:none !important}
+
+/* 헤더를 제대로 된 상점 헤더처럼 크게 */
+header{
+  height:104px !important;
+  background:rgba(255,253,249,.96) !important;
+  border-bottom:1px solid #f1d8c9 !important;
+}
+.brand{gap:12px !important}
+.brand-carrot{font-size:44px !important}
+.brand-sprout{font-size:22px !important}
+.brand b{
+  font-family:"Jua","Arial Rounded MT Bold","Malgun Gothic",sans-serif !important;
+  font-size:37px !important;
+  line-height:1 !important;
+  color:#ee7658 !important;
+}
+.brand small{
+  margin-top:5px !important;
+  font-size:9px !important;
+  letter-spacing:2.6px !important;
+}
+.icon-btn{
+  width:50px !important;height:50px !important;
+  border-radius:18px !important;
+  background:#fff8f1 !important;
+  border:1px solid #f0d4c3 !important;
+}
+
+/* 메인 판도 좌우 끝까지 시원하게 */
+main{
+  background:rgba(255,253,249,.82) !important;
+  border-radius:30px !important;
+  border:1px solid rgba(238,210,192,.88) !important;
+}
+.grid{
+  width:100% !important;
+  grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  gap:18px !important;
+}
+
+/* 카드: 쇼핑몰 카드 + 밭은 작은 잎 디테일만 */
+.card{
+  min-width:0 !important;
+  border:1px solid #eed5c5 !important;
+  border-radius:22px !important;
+  background:#fffdf9 !important;
+  box-shadow:0 9px 24px rgba(105,70,48,.08) !important;
+}
+.card:before{
+  height:7px !important;
+  top:-4px !important;
+  opacity:.55 !important;
+}
+.photo{
+  aspect-ratio:1.12/1 !important;
+  background:linear-gradient(155deg,#fff3e9,#f8ead8) !important;
+}
+.card-info{background:#fffdf9 !important}
+
+/* PC 넓이에 따른 열 수 */
+@media(min-width:1500px){
+  .grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+}
+@media(min-width:1101px) and (max-width:1499px){
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+}
+@media(min-width:761px) and (max-width:1100px){
+  header .inner,main{width:min(95vw,1050px) !important}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important}
+}
+@media(max-width:760px){
+  header{height:76px !important}
+  header .inner{width:calc(100% - 24px) !important}
+  main{
+    width:calc(100% - 20px) !important;
+    margin:14px auto 54px !important;
+    padding:14px 12px 24px !important;
+    border-radius:22px !important;
+  }
+  .brand-carrot{font-size:29px !important}
+  .brand-sprout{font-size:15px !important}
+  .brand b{font-size:24px !important}
+  .brand small{font-size:7px !important}
+  .icon-btn{width:42px !important;height:42px !important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:11px !important}
+}

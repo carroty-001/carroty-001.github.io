@@ -1,9 +1,9 @@
 let P=[],cat="전체",st="all",page=1,per=15,SETTINGS={categories:[],statuses:[],kakaoUrl:"",newDays:3};
 function responsivePerPage(){
   const w=window.innerWidth;
-  // 현재 CSS 열 수와 맞춰 항상 마지막 줄까지 꽉 채움
-  // PC: 5열×3줄=15 / 태블릿: 4열×3줄=12 / 모바일: 2열×6줄=12
-  return w<=760 ? 12 : w<=1000 ? 12 : 15;
+  const cols = w<=760 ? 2 : w<=1100 ? 4 : w<=1499 ? 5 : 6;
+  const rows = w<=760 ? 6 : 3;
+  return cols * rows;
 }
 per=responsivePerPage();
 let F=new Set(JSON.parse(localStorage.getItem("dangniFavs")||"[]"));
@@ -40,4 +40,9 @@ window.addEventListener("resize",()=>{
       render();
     }
   },120);
+});
+
+window.addEventListener("DOMContentLoaded",()=>{
+  const n=responsivePerPage();
+  if(per!==n){per=n;page=1;setTimeout(()=>render(),0);}
 });
