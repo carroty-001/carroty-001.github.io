@@ -1,9 +1,1 @@
-{
-  "categories": ["기타", "헤어", "상의", "하의", "세트", "신발", "가방", "악세서리", "소품", "배경"],
-  "statuses": [
-    {"value": "selling", "label": "판매중"},
-    {"value": "reserved", "label": "예약중"},
-    {"value": "soldout", "label": "판매완료"}
-  ],
-  "kakaoUrl": "https://open.kakao.com/o/sFesMABh"
-}
+{"categories":["꼬리","눈","다리 장식","데코","등 장식","망토","머리 (헤어)","머리장식","모자","비자르","비지 (배경)","얼굴장식","입","장식 고리","코스튬","프레임/배경/말풍선","핸드헬드"],"statuses":[{"value":"selling","label":"판매중"},{"value":"soldout","label":"판매완료"},{"value":"unavailable","label":"미판매"}],"kakaoUrl":"https://open.kakao.com/o/sFesMABh","newDays":3}
