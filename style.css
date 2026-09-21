@@ -9,216 +9,290 @@
 @media(min-width:761px) and (max-width:1199px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:760px){.shop-notice{padding:11px 12px}.shop-notice b{font-size:11px}.shop-notice span{font-size:10px}.summary{margin-top:14px}.price-wrap{gap:3px}.old-price{width:100%}.crop-fallback{font-size:48px}.detail-media .crop-fallback{font-size:74px}}
 
-/* 아기자기 감성 밭 리디자인 */
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap');
-:root{--peach:#fff0df;--butter:#fff8df;--leaf:#88ad73;--leaf-dark:#628a56;--wood:#a96f4d;--pink:#f6a3a5}
-html,body{font-family:"Gowun Dodum","Noto Sans KR",system-ui,sans-serif;background:#fbf4e8}
-.garden-bg{background:linear-gradient(180deg,#eaf8f5 0 20%,#fff8e9 20% 72%,#edf2d9 72% 100%)}
-.garden-bg:before{background:radial-gradient(ellipse at 12% 8%,#fff 0 5%,transparent 5.5%),radial-gradient(ellipse at 82% 11%,#fff 0 6%,transparent 6.5%);opacity:.65}
-.garden-bg:after{content:"";background:none}
-.side-garden{position:absolute;top:150px;bottom:90px;width:82px;display:flex;flex-direction:column;justify-content:space-around;align-items:center;font-size:31px;line-height:3.7;opacity:.5;filter:saturate(.82);pointer-events:none}.side-garden.left{left:0}.side-garden.right{right:0}.cloud{position:absolute;width:110px;height:32px;border-radius:50px;background:#ffffffa8;filter:blur(.2px)}.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}.cloud:before{width:45px;height:45px;left:20px;bottom:8px}.cloud:after{width:58px;height:58px;right:15px;bottom:3px}.c1{top:45px;left:8%}.c2{top:115px;right:10%;transform:scale(.75)}.field-front{bottom:-15px;font-size:clamp(34px,4vw,58px);opacity:.45}
-header{height:96px;background:#fffaf3ef;border-bottom:1px solid #ead8c7;box-shadow:0 5px 20px #8f765315}.brand{position:relative;padding:9px 18px 9px 15px;border:2px solid #d5a77f;border-radius:16px;background:linear-gradient(180deg,#fff2d7,#f8dfbd);box-shadow:inset 0 0 0 3px #fff8e7,0 4px 0 #c58e67,0 7px 14px #765a3b18}.brand:before,.brand:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#c38d68;top:8px}.brand:before{left:8px}.brand:after{right:8px}.brand b{font-family:"Jua","Gowun Dodum",sans-serif;font-weight:400;color:#70432f;font-size:clamp(24px,2.2vw,31px);letter-spacing:.2px;text-shadow:0 1px #fff}.brand small{font-family:"Gowun Dodum",sans-serif;letter-spacing:1.6px;color:#a4755c}.brand-carrot{font-size:31px;transform:rotate(-12deg)}.brand-sprout{font-size:18px;align-self:flex-start;margin-top:-4px}.icon-btn{background:#fff7eb;border:1px solid #ecd9c7;width:52px;height:52px;border-radius:18px;box-shadow:0 4px 12px #795d4414}
-main{background:linear-gradient(180deg,#fffdf9e8,#fff9efe5);border:1px solid #ead9c8;box-shadow:0 18px 60px #735b3d18,0 0 0 7px #ffffff52}main:before{border-color:#d8b99052}
-.farm-banner{position:relative;z-index:1;min-height:94px;margin:-3px 0 15px;padding:15px 22px;display:flex;align-items:center;justify-content:center;gap:20px;text-align:center;border:1px solid #e7c9a8;border-radius:20px;background:linear-gradient(135deg,#fff1d9dd,#fff8e9e8 48%,#edf3d9dc);box-shadow:inset 0 0 0 4px #ffffff6e,0 5px 15px #745c3d0d;overflow:hidden}.farm-banner:before{content:"🥕  ·  🌿  ·  🥕  ·  🌿  ·  🥕";position:absolute;left:0;right:0;bottom:-4px;font-size:17px;letter-spacing:8px;opacity:.18;white-space:nowrap}.banner-copy span{display:block;font-size:11px;color:#9a7058;margin-bottom:3px}.banner-copy b{font-family:"Jua","Gowun Dodum",sans-serif;font-size:20px;font-weight:400;color:#6c4a36;letter-spacing:.2px}.banner-deco{font-size:34px;filter:drop-shadow(0 3px 3px #8c654c18)}
-.shop-notice{background:#fff8f0d9;border-color:#edd5c1;box-shadow:0 3px 10px #765a4210}.shop-notice b{font-family:"Gowun Dodum",sans-serif;color:#8d5d48}.search{background:#fffefa;border-color:#ead9cb;box-shadow:inset 0 1px 5px #8062470b}.filters select{font-family:"Gowun Dodum",sans-serif;background:#fffdf8;border-color:#ead9cb}.summary{background:linear-gradient(90deg,#fff0dcba,#f2f3dcb8);border-color:#ead2ae;color:#735441}.summary b{font-family:"Jua","Gowun Dodum",sans-serif;font-weight:400;font-size:16px}.card{border-color:#ead9c9;border-radius:18px;background:#fffdf9;box-shadow:0 5px 16px #806b5d13}.card:hover{box-shadow:0 12px 26px #6f58301f}.photo{background:linear-gradient(145deg,#fff4ed,#f7f0df)}.card h3{font-family:"Gowun Dodum",sans-serif;font-weight:800;color:#554039}.category{color:#aa9387}.status{background:#e5f2dc;color:#5b8753}.badge{font-family:"Jua",sans-serif;font-weight:400}.badge.new{background:#f2777d}.pages button{font-family:"Gowun Dodum",sans-serif;background:#fffaf2;box-shadow:0 2px 6px #6e503810}.pages button.on{background:#ef8c79}.crop-fallback{background:radial-gradient(circle at 50% 45%,#fffdf6 0 28%,#faeedc 62%,#f4e3ce 100%);filter:saturate(.92)}.basket-inquiry,.actions a{background:linear-gradient(135deg,#ef8c79,#f4a38c)}
-@media(max-width:760px){header{height:82px}.brand{padding:7px 11px 7px 9px;border-radius:14px}.brand b{font-size:22px}.brand-carrot{font-size:25px}.brand-sprout{font-size:15px}.icon-btn{width:45px;height:45px;font-size:26px}.farm-banner{min-height:76px;padding:11px 10px;gap:8px;border-radius:17px}.banner-copy span{font-size:9.5px}.banner-copy b{font-size:16px}.banner-deco{font-size:26px}.side-garden{width:38px;font-size:20px;opacity:.22;top:120px}.garden-bg{background:linear-gradient(180deg,#edf9f6 0 16%,#fff8eb 16% 78%,#edf2dc 78% 100%)}main{margin-top:9px}.summary b{font-size:14px}}
+/* =========================================================
+   당그니네 밭 — 초기 당그니샵 감성 기반 디자인 리빌드
+   기능/문구는 건드리지 않고 시각 디자인만 변경
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap');
 
-
-/* ===== 감성 밭 디자인 V2 : 문구 추가 없이 순수 디자인만 변경 ===== */
-
-/* 더 둥글고 부드러운 한글 인상 */
-html,body,button,input,select{
-  font-family:"Jua","Gowun Dodum","Arial Rounded MT Bold","Malgun Gothic",sans-serif;
+:root{
+  --coral:#f58d79;
+  --coral2:#ffad8f;
+  --peach:#fff0e4;
+  --cream:#fffaf2;
+  --paper:#fffdf9;
+  --brown:#5f463a;
+  --muted:#a18476;
+  --line:#efd9c9;
+  --leaf:#8fbf77;
+  --leaf2:#b9d99d;
+  --sun:#ffd987;
 }
-body{color:#4f4038}
+html,body,button,input,select{
+  font-family:"Gowun Dodum","Noto Sans KR","Malgun Gothic",sans-serif;
+}
+body{color:var(--brown);background:#f8efe6}
+button,input,select{font-weight:500}
 
-/* 단색 아이보리 대신 하늘-풀-흙이 아주 은은하게 이어지는 배경 */
+/* 배경: 단색 아이보리 X / 초기 당그니샵의 크림+피치에 밭을 은은하게 */
 .garden-bg{
   background:
-    radial-gradient(circle at 8% 23%,rgba(255,255,255,.82) 0 22px,transparent 23px),
-    radial-gradient(circle at 88% 15%,rgba(255,255,255,.72) 0 30px,transparent 31px),
-    linear-gradient(180deg,#e9f7f1 0 18%,#f9f4dc 18% 55%,#e9edca 55% 79%,#d8c69c 79% 100%);
+    radial-gradient(circle at 8% 9%,rgba(255,255,255,.94) 0 85px,transparent 86px),
+    radial-gradient(circle at 91% 18%,rgba(255,225,202,.56) 0 170px,transparent 171px),
+    radial-gradient(circle at 17% 72%,rgba(211,231,188,.50) 0 210px,transparent 211px),
+    linear-gradient(180deg,#fff8f1 0%,#fff2e7 43%,#f7f4df 76%,#eef1d8 100%);
 }
 .garden-bg:before{
   content:"";
-  position:absolute;inset:18% 0 0;
+  position:absolute;inset:0;
   background:
-    radial-gradient(circle at 15px 15px,rgba(255,255,255,.36) 0 2px,transparent 3px) 0 0/46px 46px,
-    linear-gradient(90deg,transparent 49%,rgba(120,151,86,.07) 50%,transparent 51%) 0 0/120px 100%;
-  opacity:.9;
+    radial-gradient(ellipse at 13% 30%,rgba(255,255,255,.52) 0 42px,transparent 44px),
+    radial-gradient(ellipse at 79% 8%,rgba(255,255,255,.55) 0 58px,transparent 60px),
+    radial-gradient(circle at 4% 58%,rgba(244,166,139,.10) 0 85px,transparent 86px),
+    radial-gradient(circle at 96% 63%,rgba(141,188,116,.13) 0 110px,transparent 111px);
+  pointer-events:none;
 }
 .garden-bg:after{
   content:"";
-  position:absolute;left:0;right:0;bottom:0;height:22%;
+  position:absolute;left:0;right:0;bottom:0;height:180px;
   background:
-    repeating-linear-gradient(168deg,transparent 0 35px,rgba(116,78,48,.08) 36px 52px,transparent 53px 88px),
-    linear-gradient(180deg,rgba(188,167,112,.08),rgba(150,113,75,.14));
+    radial-gradient(ellipse at 7% 100%,rgba(130,176,103,.22) 0 80px,transparent 82px),
+    radial-gradient(ellipse at 29% 110%,rgba(130,176,103,.17) 0 120px,transparent 122px),
+    radial-gradient(ellipse at 66% 110%,rgba(130,176,103,.18) 0 130px,transparent 132px),
+    radial-gradient(ellipse at 94% 100%,rgba(130,176,103,.22) 0 90px,transparent 92px);
+  pointer-events:none;
 }
+.side-garden{opacity:.20;filter:saturate(.7);font-size:24px;width:54px}
+.field-back{opacity:.10}
+.field-front{opacity:.18}
 
-/* 좌우는 이모지 줄 대신 덩굴/울타리처럼 보이게 */
-.side-garden{
-  width:72px;top:120px;bottom:45px;
-  font-size:27px;line-height:4.15;opacity:.48;
-  background:linear-gradient(90deg,rgba(112,151,84,.10),transparent);
-  border-radius:0 40px 40px 0;
-}
-.side-garden.right{
-  background:linear-gradient(270deg,rgba(112,151,84,.10),transparent);
-  border-radius:40px 0 0 40px;
-}
-.field-front{opacity:.38;filter:saturate(.75)}
-
-/* 헤더: 나무 팻말 느낌을 확실하게 */
+/* 상단: 초기 당그니샵처럼 깨끗한 쇼핑몰 헤더 + 당근 포인트 */
 header{
-  background:rgba(255,251,244,.90);
-  border-bottom:1px solid #dfcfb9;
-  box-shadow:0 5px 18px rgba(103,77,48,.10);
+  height:86px;
+  background:rgba(255,253,249,.91);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(237,213,196,.78);
+  box-shadow:0 7px 28px rgba(106,71,48,.07);
 }
 .brand{
-  border:2px solid #b98258;
-  border-radius:18px 18px 15px 15px;
-  background:
-    linear-gradient(90deg,rgba(139,92,55,.06) 1px,transparent 1px) 0 0/18px 100%,
-    linear-gradient(180deg,#ffeac7,#f3cf9d);
-  box-shadow:inset 0 0 0 4px rgba(255,248,229,.62),0 4px 0 #b67a51,0 7px 14px rgba(91,60,37,.13);
+  gap:9px;
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
 }
+.brand-carrot{
+  font-size:35px;
+  transform:rotate(-10deg);
+  filter:drop-shadow(0 4px 5px rgba(161,92,50,.12));
+}
+.brand-sprout{font-size:17px;transform:rotate(7deg);margin-left:-5px}
 .brand b{
-  font-family:"Jua","Arial Rounded MT Bold","Malgun Gothic",sans-serif;
+  font-family:"Jua",sans-serif;
+  font-size:30px;
   font-weight:400;
-  color:#69422f;
-  letter-spacing:.4px;
-  text-shadow:0 1px 0 #fff7e8;
+  letter-spacing:.3px;
+  color:#e97858;
+  text-shadow:none;
 }
-.brand small{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+.brand small{
+  font-family:"Gowun Dodum",sans-serif;
+  color:#b48f7d;
+  letter-spacing:2px;
+  font-size:8px;
+}
+.icon-btn{
+  border:1px solid #f0ddd0;
+  background:rgba(255,250,244,.88);
+  border-radius:16px;
+  box-shadow:0 5px 14px rgba(104,71,48,.07);
+  transition:.18s ease;
+}
+.icon-btn:hover{transform:translateY(-2px);background:#fff0e6;border-color:#f4c9b5}
 
-/* 콘텐츠 판 자체도 유리한 흰 박스가 아니라 정원 종이/천 느낌 */
+/* 메인: 큰 박스처럼 답답하지 않게 */
 main{
-  background:
-    radial-gradient(circle at 12px 12px,rgba(221,193,151,.11) 0 1.5px,transparent 2px) 0 0/24px 24px,
-    linear-gradient(180deg,rgba(255,253,246,.91),rgba(250,244,225,.90));
-  border:1px solid #dcc8aa;
-  box-shadow:0 18px 55px rgba(91,68,42,.14),0 0 0 7px rgba(255,255,255,.34);
+  background:rgba(255,253,249,.72);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  border:1px solid rgba(239,217,201,.75);
+  border-radius:28px;
+  box-shadow:0 20px 60px rgba(105,73,48,.08);
 }
-main:before{
-  inset:10px;
-  border:2px dashed rgba(181,146,101,.26);
+main:before{display:none}
+
+/* 안내/검색/필터: 귀엽지만 정돈된 쇼핑몰 UI */
+.shop-notice{
+  border:1px solid #f2d8ca;
   border-radius:18px;
+  background:linear-gradient(135deg,rgba(255,243,233,.94),rgba(255,250,243,.92));
+  box-shadow:0 7px 18px rgba(129,83,55,.05);
 }
-
-/* 검색/필터도 딱딱한 흰 UI 대신 작은 정원 표지판 느낌 */
-.search,.filters select{
-  background:rgba(255,253,247,.92);
-  border:1.5px solid #ddc7aa;
-  box-shadow:0 3px 0 rgba(177,137,94,.10);
+.shop-notice b{font-family:"Jua",sans-serif;font-weight:400;color:#d86f59;font-size:14px}
+.shop-notice span{color:#8d7568}
+.search{
+  border:1.5px solid #efdbcd;
+  border-radius:17px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 7px 18px rgba(113,76,50,.055);
 }
-.search input,.filters select{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+.search:focus-within{border-color:#f4a88e;box-shadow:0 0 0 4px rgba(245,141,121,.10)}
+.search input{font-family:"Gowun Dodum",sans-serif}
+.filters select{
+  border:1.5px solid #efdbcd;
+  border-radius:15px;
+  background:#fffdf9;
+  color:#71594d;
+  box-shadow:0 5px 14px rgba(113,76,50,.045);
+}
 .summary{
-  background:linear-gradient(90deg,rgba(246,225,188,.72),rgba(228,238,203,.72));
-  border:1px solid #d8c398;
-  box-shadow:inset 0 0 0 3px rgba(255,255,255,.28);
+  border:0;
+  border-radius:15px;
+  background:linear-gradient(90deg,rgba(255,234,218,.82),rgba(242,246,224,.86));
+  color:#725549;
 }
-.summary b{font-family:"Jua","Malgun Gothic",sans-serif;font-weight:400}
+.summary b{font-family:"Jua",sans-serif;font-weight:400;font-size:17px;color:#d87059}
 
-/* 핵심: 상품 카드 하나하나를 '작은 밭 구획'처럼 */
+/* 상품 영역: '작은 텃밭 화분' 느낌, 촌스러운 흙테두리 X */
+.grid{gap:18px}
 .card{
+  position:relative;
   overflow:visible;
-  border:2px solid #b98c62;
-  border-radius:18px 18px 15px 15px;
-  background:#fffdf8;
-  box-shadow:
-    0 4px 0 #d5b58d,
-    0 9px 18px rgba(98,72,43,.10);
+  border:1px solid #efd9ca;
+  border-radius:21px;
+  background:#fffdf9;
+  box-shadow:0 8px 22px rgba(104,72,49,.075);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
 }
+.card:hover{
+  transform:translateY(-5px);
+  border-color:#efc8b4;
+  box-shadow:0 15px 30px rgba(104,72,49,.12);
+}
+/* 카드 위에 아주 작은 잎사귀 띠 — 밭 느낌은 디테일로만 */
 .card:before{
   content:"";
   position:absolute;
   z-index:2;
-  left:8px;right:8px;top:-7px;
-  height:13px;
-  border-radius:50% 50% 45% 45%;
+  left:16px;right:48px;top:-5px;
+  height:9px;
+  opacity:.72;
   background:
-    radial-gradient(ellipse at 8px 7px,#87ad68 0 6px,transparent 6.5px) 0 0/22px 13px repeat-x;
-  opacity:.88;
+    radial-gradient(ellipse at 5px 7px,#a6ca89 0 4px,transparent 4.5px) 0 0/18px 9px repeat-x;
   pointer-events:none;
 }
-.card:after{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  left:7px;right:7px;bottom:-7px;height:11px;
-  border-radius:50%;
-  background:rgba(122,83,52,.15);
-  filter:blur(4px);
-}
-.card:hover{
-  transform:translateY(-4px) rotate(-.15deg);
-  box-shadow:0 5px 0 #d0ad82,0 14px 24px rgba(98,72,43,.14);
-}
 .photo{
-  margin:7px 7px 0;
-  border-radius:12px 12px 8px 8px;
-  border:1px solid rgba(181,145,105,.26);
+  margin:8px 8px 0;
+  border-radius:16px;
+  border:1px solid rgba(237,217,202,.72);
   background:
-    radial-gradient(circle at 20% 25%,rgba(255,255,255,.65) 0 2px,transparent 3px),
-    linear-gradient(180deg,#fff5e9,#f5ead4);
+    radial-gradient(circle at 76% 19%,rgba(255,255,255,.85) 0 12px,transparent 13px),
+    linear-gradient(145deg,#fff4ec,#f8eadc);
+  overflow:hidden;
 }
-.card-info{
-  margin:0 6px 6px;
-  padding:10px 7px 9px;
-  border-radius:0 0 10px 10px;
-  background:rgba(255,254,249,.92);
-}
+.card-info{padding:11px 12px 13px}
 .card h3{
-  font-family:"Jua","Malgun Gothic",sans-serif;
+  font-family:"Jua",sans-serif;
   font-weight:400;
-  font-size:15px;
-  letter-spacing:.1px;
+  font-size:16px;
+  color:#594137;
+  letter-spacing:0;
 }
-.category{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
-.price-wrap,.status{font-family:"Jua","Malgun Gothic",sans-serif}
+.category{font-size:10px;color:#ad9183}
 .heart{
-  z-index:4;
-  border:1px solid rgba(213,173,140,.45);
-  box-shadow:0 2px 7px rgba(102,74,45,.12);
+  top:10px;right:10px;
+  width:31px;height:31px;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(242,165,170,.48);
+  box-shadow:0 4px 12px rgba(100,68,47,.09);
 }
+.heart:hover{transform:scale(1.08)}
+.status{
+  border-radius:999px;
+  background:#e2f2dc;
+  color:#56844e;
+  font-weight:700;
+}
+.status.unavailable{background:#eee9e4;color:#8c7e76}
+.badge{
+  border-radius:9px;
+  font-family:"Jua",sans-serif;
+  font-weight:400;
+  box-shadow:0 4px 10px rgba(105,65,47,.10);
+}
+.badge.new{background:#ff6977}
+.badge.sale{background:#fff;border-color:#f05b66;color:#ed4f5d}
+.old-price{color:#b8a59b}
+.sale-price,.normal-price,.discount{color:#ef5962}
 
-/* 이미지가 없을 때 작물이 그냥 이모지 하나 떠있는 느낌이 덜하도록 흙 화분/밭 배경 */
+/* 사진 없는 상품: 이모지만 덩그러니 X, 작은 파스텔 화단 */
 .crop-fallback{
   position:relative;
   background:
-    radial-gradient(ellipse at 50% 78%,#d8b488 0 22%,transparent 23%),
-    radial-gradient(ellipse at 50% 82%,#c99a68 0 31%,transparent 32%),
-    linear-gradient(180deg,#fff7e8 0 67%,#ead7b7 68% 100%);
-  text-shadow:0 4px 7px rgba(86,60,34,.12);
-}
-.crop-fallback:after{
-  content:"";
-  position:absolute;left:10%;right:10%;bottom:15%;
-  height:2px;
-  background:rgba(117,80,49,.12);
-  box-shadow:0 7px rgba(117,80,49,.08);
+    radial-gradient(ellipse at 50% 78%,rgba(194,155,108,.17) 0 27%,transparent 28%),
+    radial-gradient(circle at 18% 18%,rgba(255,255,255,.68) 0 8px,transparent 9px),
+    linear-gradient(180deg,#fff7ef 0 70%,#f4ead5 71% 100%);
+  filter:none;
+  text-shadow:0 6px 10px rgba(93,65,44,.10);
 }
 
-/* 페이지 버튼도 씨앗/돌멩이처럼 */
+/* 페이지 버튼 */
+.pages{gap:7px}
 .pages button{
-  background:#fff8e9;
-  border:1px solid #dec7a8;
-  box-shadow:0 3px 0 rgba(170,132,91,.12);
+  border:1px solid #f0ddd0;
+  background:#fffdf9;
+  color:#84695c;
+  box-shadow:0 4px 11px rgba(105,73,48,.055);
 }
 .pages button.on{
-  background:#e98f78;
-  border-color:#d97865;
+  border-color:#f58d79;
+  background:#f58d79;
+  color:#fff;
+  box-shadow:0 6px 14px rgba(245,141,121,.22);
 }
 
-/* 모바일에서도 장식이 답답하지 않도록 */
+/* 상세/바구니도 같은 감성 */
+.sheet{
+  background:#fffdf9;
+  box-shadow:0 -15px 45px rgba(78,53,38,.15);
+}
+.sheet h2,.panel-head h2{font-family:"Jua",sans-serif;font-weight:400;color:#5f463a}
+.actions a,.basket-inquiry{
+  background:linear-gradient(135deg,#f58d79,#f7a083);
+  box-shadow:0 7px 16px rgba(245,141,121,.20);
+}
+
+/* 반응형: 기능 유지, 장식만 절제 */
+@media(max-width:1000px){
+  .grid{gap:14px}
+}
 @media(max-width:760px){
-  .side-garden{width:27px;font-size:17px;opacity:.18}
-  main{background:
-    radial-gradient(circle at 10px 10px,rgba(221,193,151,.10) 0 1px,transparent 1.5px) 0 0/20px 20px,
-    linear-gradient(180deg,rgba(255,253,246,.93),rgba(250,244,225,.91));
+  header{height:76px}
+  .brand-carrot{font-size:27px}
+  .brand b{font-size:22px}
+  .brand small{font-size:7px;letter-spacing:1.4px}
+  .brand-sprout{font-size:14px}
+  .icon-btn{border-radius:14px}
+  main{
+    border-radius:22px;
+    background:rgba(255,253,249,.79);
+    box-shadow:0 12px 34px rgba(105,73,48,.07);
   }
-  .card{border-width:1.5px;border-radius:16px}
-  .card:before{left:7px;right:7px;top:-5px;height:10px;background-size:18px 10px}
-  .photo{margin:6px 6px 0}
+  .garden-bg{
+    background:
+      radial-gradient(circle at 90% 12%,rgba(255,222,200,.48) 0 105px,transparent 106px),
+      radial-gradient(circle at 8% 68%,rgba(211,231,188,.43) 0 125px,transparent 126px),
+      linear-gradient(180deg,#fff8f2,#fff2e8 50%,#f3f2dd 100%);
+  }
+  .side-garden{opacity:.08;width:24px}
+  .field-front,.field-back{opacity:.08}
+  .grid{gap:11px}
+  .card{border-radius:17px;box-shadow:0 6px 16px rgba(104,72,49,.07)}
+  .card:before{left:12px;right:41px;opacity:.55}
+  .photo{margin:6px 6px 0;border-radius:13px}
+  .card-info{padding:9px 9px 11px}
   .card h3{font-size:14px}
+  .summary b{font-size:15px}
+  .shop-notice b{font-size:12px}
 }
