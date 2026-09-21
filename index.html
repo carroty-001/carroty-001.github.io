@@ -1,11 +1,46 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>당그니네 밭</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="garden-bg" aria-hidden="true"><span class="cloud c1"></span><span class="cloud c2"></span><div class="side-garden left">🌼<br>🌿<br>🥕<br>🌱<br>🌷</div><div class="side-garden right">🌷<br>🌱<br>🥕<br>🌿<br>🌼</div><div class="field field-front">🌱　🌼　🥕　🌿　🌷　🥕　🌱</div></div>
-<header><div class="brand"><span class="brand-carrot">🥕</span><div><b>당그니네 밭</b><small>DANGUNI FARM</small></div><span class="brand-sprout">🌱</span></div><button id="favTop" class="icon-btn" aria-label="내 바구니">🧺<i id="favCount">0</i></button></header>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥕 당그니네 밭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body><div class="site-bg">
+<header class="header">
+  <a class="logo" href="#"><span class="logo-carrot">🥕</span><span><strong>당그니네 밭</strong><small>DANGNI FARM</small></span></a>
+  <nav class="nav"><a href="#shop" class="active">SHOP</a></nav>
+  <div class="header-actions"><button class="icon-btn" id="favoritesBtn" title="내 바구니">🧺 <span id="favoriteCount">0</span></button></div>
+</header>
 <main>
-<section class="shop-notice"><b>전체 상태 필터를 '판매중'으로 변경 후 쇼핑해주세요</b><span>'미판매' 상품의 경우 멤버십 미보유 계정에 있는 등의 사유로 아직 구매 불가한 아이템입니다. 추후 멤버십 결제시 구매 가능합니다.</span></section>
-<div class="search-row"><label class="search">⌕ <input id="q" placeholder="어떤 작물을 찾고 있나요?"></label></div>
-<div class="filters"><select id="category"><option value="전체">전체 카테고리</option></select><select id="status"><option value="all">전체 상태</option></select></div>
-<div class="summary"><b>🌱 총 <span id="total">0</span>개의 작물이 자라고 있어요!</b></div><section id="grid" class="grid"></section><section id="empty" class="empty" hidden><div>🌱</div><b>앗, 아직 이 밭에는 없어요!</b></section><nav id="pages" class="pages"></nav></main>
-<div id="detail" class="overlay" hidden><div class="shade" data-close></div><article class="sheet"><button class="close" data-close>×</button><div class="hero"><span id="detailBadge"></span><button id="detailHeart" class="heart big"></button><div id="detailMedia" class="detail-media"></div></div><div id="thumbs" class="thumbs"></div><h2 id="detailName"></h2><dl><div><dt>카테고리</dt><dd id="detailCat"></dd></div><div><dt>판매 상태</dt><dd id="detailStatus"></dd></div><div><dt>가격</dt><dd id="detailPrice"></dd></div></dl><div class="actions"><button id="detailFav">♡ 찜하기</button><a id="kakao" target="_blank" rel="noopener">문의하기</a></div></article></div>
-<div id="favPanel" class="overlay" hidden><div class="shade" data-fav-close></div><article class="sheet fav-sheet"><div class="panel-head"><button data-fav-close>‹</button><h2>🧺 내 바구니</h2></div><div id="favList"></div><button class="basket-inquiry" id="basketInquiry">담은 작물 한 번에 문의하기</button><div class="copy-hint" id="copyHint" aria-live="polite"></div></article></div>
-<script src="script.js"></script></body></html>
+<section class="hero" id="shop">
+ <div class="hero-copy"><p class="eyebrow">🥕 DANGNI'S LITTLE ITEM FIELD</p><h1>당그니네 <span>밭</span></h1></div>
+ <div class="hero-art" aria-hidden="true"><div class="cloud cloud1">♡</div><div class="carrot carrot1">🥕</div><div class="carrot carrot2">🥕</div><div class="bunny">🐰</div><div class="sparkle s1">✦</div><div class="sparkle s2">♡</div><div class="grass">⌁⌁⌁</div></div>
+</section>
+
+<div class="notice-fixed"><b>전체 상태 필터를 '판매중'으로 변경 후 쇼핑해주세요</b>'미판매' 상품의 경우 멤버십 미보유 계정에 있는 등의 사유로 아직 구매 불가한 아이템입니다. 추후 멤버십 결제시 구매 가능합니다.</div>
+
+<section class="shop-toolbar">
+ <div class="search-wrap"><span>🔎</span><input id="searchInput" type="search" placeholder="어떤 작물을 찾고 있나요?" autocomplete="off"><button id="clearSearch" class="clear-search">×</button></div>
+ <div class="filter-row"><div class="categories" id="categories"></div><div class="selects"><select id="statusFilter"></select></div></div>
+</section>
+
+<div class="result-line"><b>🌱 총 <span id="resultCount">0</span>개의 작물이 자라고 있어요!</b></div>
+<section class="content-grid"><div class="products-area" style="grid-column:1/-1"><div class="products-grid" id="products"></div>
+<div class="empty-state hidden" id="emptyState"><div>🥕</div><h3>앗, 아직 이 밭에는 없어요!</h3></div>
+<div class="pagination" id="pagination"></div></div></section>
+</main>
+</div>
+
+<div class="modal hidden" id="productModal"><div class="modal-backdrop" data-close-modal></div><div class="modal-card">
+<button class="modal-close" data-close-modal>×</button><div class="modal-image-wrap"><div class="modal-image" id="modalImage"></div></div>
+<div class="modal-details"><div id="modalBadges"></div><div class="status-badge" id="modalStatus"></div><h2 id="modalName"></h2><div class="modal-price" id="modalPrice"></div><div class="tags" id="modalTags"></div>
+<div class="product-meta"><div><span>상품번호</span><b id="modalId"></b></div><div><span>카테고리</span><b id="modalCategory"></b></div><div><span>등록일</span><b id="modalDate"></b></div></div>
+<div class="modal-actions"><a class="primary-btn" id="modalContact" href="#" target="_blank">💬 문의하기</a><button class="secondary-btn" id="modalFavorite">♡ 찜하기</button></div></div></div></div>
+
+<div class="favorite-panel hidden" id="favoritePanel"><div class="favorite-backdrop" data-fav-close></div><div class="favorite-card">
+<div class="favorite-head"><h2>🧺 내 바구니</h2><button class="favorite-close" data-fav-close>×</button></div>
+<div class="favorite-list" id="favoriteList"></div><button class="basket-inquiry" id="basketInquiry">담은 작물 한 번에 문의하기</button><div class="copy-hint" id="copyHint"></div></div></div>
+<div class="toast" id="toast"></div><script src="script.js"></script></body></html>
