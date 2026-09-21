@@ -416,3 +416,216 @@ main{
   .icon-btn{width:42px !important;height:42px !important}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:11px !important}
 }
+
+/* =========================================================
+   REFERENCE MATCH — 사용자가 준 초기 DANGNI SHOP 감성 복원
+   새 문구 추가 없음 / 기능 유지
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap');
+
+:root{
+  --orange:#ff9765;
+  --orange2:#ffb17e;
+  --pink:#ff8fa6;
+  --cream:#fff9f1;
+  --peach:#fff0e5;
+  --paper:#fffdf9;
+  --ink:#5b4035;
+  --line:#efd8c7;
+  --green:#98c56d;
+}
+html,body,button,input,select{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+body{
+  color:var(--ink)!important;
+  background:
+    radial-gradient(circle at 5% 15%,rgba(255,190,145,.13) 0 180px,transparent 181px),
+    radial-gradient(circle at 96% 30%,rgba(255,218,188,.20) 0 240px,transparent 241px),
+    linear-gradient(180deg,#fff8f1,#fffaf5 52%,#f9f1e7)!important;
+}
+.garden-bg{
+  background:
+    radial-gradient(circle at 4% 45%,rgba(255,183,135,.12) 0 100px,transparent 101px),
+    radial-gradient(circle at 96% 62%,rgba(168,204,126,.10) 0 150px,transparent 151px),
+    linear-gradient(180deg,rgba(255,248,241,.90),rgba(255,250,245,.92))!important;
+}
+.side-garden,.field-back,.field-front{display:none!important}
+
+/* 헤더 — 레퍼런스의 깔끔한 상점 네비게이션 감성 */
+header{
+  height:92px!important;
+  background:rgba(255,253,250,.97)!important;
+  border-bottom:1px solid #f0ddcf!important;
+  box-shadow:0 5px 20px rgba(113,74,49,.055)!important;
+}
+header .inner{
+  width:min(94vw,1640px)!important;
+  max-width:none!important;
+}
+.brand{gap:10px!important}
+.brand-carrot{font-size:40px!important;filter:drop-shadow(0 4px 5px rgba(170,88,42,.12))}
+.brand-sprout{font-size:20px!important}
+.brand b{
+  font-family:"Jua",sans-serif!important;
+  font-size:35px!important;
+  font-weight:400!important;
+  color:#f07c55!important;
+  letter-spacing:.4px!important;
+}
+.brand small{font-size:8px!important;letter-spacing:2.4px!important;color:#b28d7a!important}
+.icon-btn{
+  width:48px!important;height:48px!important;
+  border-radius:17px!important;
+  background:#fffaf5!important;
+  border:1px solid #f0d8c8!important;
+  box-shadow:0 5px 14px rgba(103,68,45,.07)!important;
+}
+
+/* 상단 일러스트 배너 — 텍스트 없이 토끼+당근 그래픽만 */
+.visual-hero{
+  position:relative;
+  z-index:2;
+  width:min(94vw,1640px);
+  height:142px;
+  margin:18px auto 0;
+  overflow:hidden;
+  border:1px solid #efd8c6;
+  border-radius:25px 25px 18px 18px;
+  background:
+    radial-gradient(circle at 11% 32%,rgba(255,255,255,.62) 0 42px,transparent 43px),
+    radial-gradient(circle at 38% 75%,rgba(255,255,255,.36) 0 80px,transparent 81px),
+    linear-gradient(120deg,#fff1e4 0%,#fff6ed 52%,#ffeadc 100%);
+  box-shadow:0 10px 28px rgba(105,68,43,.07);
+}
+.visual-hero:after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:-1px;height:15px;
+  background:
+    radial-gradient(circle at 10px -2px,transparent 12px,#fffdf9 13px) 0 0/28px 16px repeat-x;
+}
+.hero-carrots{
+  position:absolute;left:6%;top:28px;
+  font-size:62px;transform:rotate(-12deg);
+  filter:drop-shadow(0 8px 8px rgba(147,87,48,.10));
+}
+.hero-bunny{
+  position:absolute;right:11%;bottom:-25px;
+  width:138px;height:126px;
+  border:3px solid #7e5b4d;
+  border-radius:54% 54% 46% 46%;
+  background:#fffdf9;
+  box-shadow:0 10px 0 rgba(255,184,167,.18);
+}
+.hero-bunny .ear{
+  position:absolute;top:-64px;width:38px;height:82px;
+  border:3px solid #7e5b4d;background:#fffdf9;border-radius:50% 50% 25% 25%;
+}
+.hero-bunny .ear:after{
+  content:"";position:absolute;inset:12px 9px;
+  background:#ffc8c2;border-radius:50%;
+}
+.hero-bunny .e1{left:20px;transform:rotate(-9deg)}
+.hero-bunny .e2{right:20px;transform:rotate(9deg)}
+.hero-bunny .face{
+  position:absolute;left:0;right:0;top:43px;text-align:center;
+  font-family:"Jua",sans-serif;font-size:24px;color:#6b4c40;
+}
+.hero-held-carrot{position:absolute;right:-39px;bottom:22px;font-size:78px;transform:rotate(-25deg)}
+.hero-mini{position:absolute;font-size:25px;opacity:.72}
+.hero-mini.c1{left:23%;top:28px;transform:rotate(18deg)}
+.hero-mini.c2{left:34%;bottom:28px}
+.hero-mini.c3{right:27%;top:23px;color:#ef7182;font-size:34px;font-family:"Jua",sans-serif}
+.hero-mini.c4{right:3%;bottom:34px;transform:rotate(24deg)}
+
+/* 메인 쇼핑 영역 */
+main{
+  width:min(94vw,1640px)!important;
+  max-width:none!important;
+  margin:14px auto 70px!important;
+  padding:22px 24px 32px!important;
+  border:1px solid #edd7c8!important;
+  border-radius:0 0 24px 24px!important;
+  background:rgba(255,253,249,.96)!important;
+  box-shadow:0 14px 38px rgba(106,70,45,.075)!important;
+}
+main:before{display:none!important}
+.shop-notice{
+  background:#fff8f1!important;border:1px solid #f0d9ca!important;
+  border-radius:15px!important;box-shadow:none!important;
+}
+.shop-notice b{font-family:"Jua",sans-serif!important;font-weight:400!important;color:#e97a5d!important}
+.search{
+  border:1px solid #ecd7c9!important;border-radius:14px!important;
+  background:#fff!important;box-shadow:none!important;
+}
+.filters select{
+  border:1px solid #ecd7c9!important;border-radius:14px!important;
+  background:#fffaf6!important;box-shadow:none!important;
+}
+.summary{
+  background:linear-gradient(90deg,#fff1e5,#f7f6e4)!important;
+  border:0!important;border-radius:14px!important;
+}
+.summary b{font-family:"Jua",sans-serif!important;font-weight:400!important;color:#e67658!important}
+
+/* 상품: 레퍼런스처럼 밝은 복숭아 카드 */
+.grid{gap:16px!important}
+.card{
+  overflow:hidden!important;
+  border:1px solid #ecd4c3!important;
+  border-radius:17px!important;
+  background:#fffdf9!important;
+  box-shadow:0 5px 13px rgba(104,69,46,.055)!important;
+}
+.card:before{display:none!important}
+.card:hover{transform:translateY(-3px)!important;box-shadow:0 11px 22px rgba(104,69,46,.10)!important}
+.photo{
+  margin:7px 7px 0!important;
+  border-radius:13px!important;
+  border:0!important;
+  aspect-ratio:1.12/1!important;
+  background:linear-gradient(145deg,#fff0e7,#fbe5dc)!important;
+}
+.crop-fallback{
+  background:
+    radial-gradient(circle at 20% 18%,rgba(255,255,255,.60) 0 8px,transparent 9px),
+    linear-gradient(145deg,#fff0e7,#fbe5dc)!important;
+}
+.card-info{padding:10px 11px 12px!important;background:#fffdf9!important}
+.card h3{font-family:"Jua",sans-serif!important;font-weight:400!important;font-size:15px!important;color:#51392f!important}
+.category{color:#a88878!important}
+.status{background:#8fca72!important;color:#fff!important;font-size:9px!important}
+.status.unavailable{background:#b9aaa1!important}
+.heart{background:rgba(255,255,255,.92)!important;border:1px solid #edcabb!important}
+
+/* PC 상품은 레퍼런스처럼 넓게 6열, 페이지는 JS가 18개로 맞춤 */
+.grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+@media(min-width:1101px) and (max-width:1499px){
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+@media(min-width:761px) and (max-width:1100px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  header{height:70px!important}
+  header .inner{width:calc(100% - 22px)!important}
+  .brand-carrot{font-size:27px!important}
+  .brand b{font-size:23px!important}
+  .brand-sprout{font-size:14px!important}
+  .visual-hero{
+    width:100%;height:105px;margin:0;
+    border-left:0;border-right:0;border-radius:0;
+  }
+  .hero-carrots{font-size:39px;left:7%;top:27px}
+  .hero-bunny{right:7%;width:90px;height:84px;bottom:-17px}
+  .hero-bunny .ear{top:-43px;width:25px;height:54px;border-width:2px}
+  .hero-bunny .e1{left:14px}.hero-bunny .e2{right:14px}
+  .hero-bunny .face{top:27px;font-size:16px}
+  .hero-held-carrot{font-size:49px;right:-26px;bottom:13px}
+  .hero-mini{font-size:17px}
+  main{
+    width:100%!important;margin:0 auto 50px!important;padding:13px 11px 24px!important;
+    border-left:0!important;border-right:0!important;border-radius:0 0 20px 20px!important;
+  }
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .card h3{font-size:14px!important}
+}
