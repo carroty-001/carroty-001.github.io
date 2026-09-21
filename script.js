@@ -1,4 +1,11 @@
-let P=[],cat="전체",st="all",page=1,per=10,SETTINGS={categories:[],statuses:[],kakaoUrl:"",newDays:3};
+let P=[],cat="전체",st="all",page=1,per=15,SETTINGS={categories:[],statuses:[],kakaoUrl:"",newDays:3};
+function responsivePerPage(){
+  const w=window.innerWidth;
+  // 현재 CSS 열 수와 맞춰 항상 마지막 줄까지 꽉 채움
+  // PC: 5열×3줄=15 / 태블릿: 4열×3줄=12 / 모바일: 2열×6줄=12
+  return w<=760 ? 12 : w<=1000 ? 12 : 15;
+}
+per=responsivePerPage();
 let F=new Set(JSON.parse(localStorage.getItem("dangniFavs")||"[]"));
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const money=n=>Math.round(Number(n||0)).toLocaleString("ko-KR")+"원";
@@ -20,3 +27,17 @@ function showFavs(){let a=P.filter(p=>F.has(p.id));$("#favList").innerHTML=a.len
 async function basketInquiry(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),hint=$("#copyHint");if(!names.length){hint.textContent="바구니에 담긴 작물이 없어요 🌱";return}let text=names.join("\n");try{await navigator.clipboard.writeText(text)}catch(e){let t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}hint.textContent=`${names.length}개 아이템명이 복사됐어요! 카톡에서 붙여넣어 주세요 💬`;setTimeout(()=>{location.href=SETTINGS.kakaoUrl},350)}
 $("#q").oninput=()=>{page=1;render()};$("#category").onchange=e=>{cat=e.target.value;page=1;render()};$("#status").onchange=e=>{st=e.target.value;page=1;render()};$("#favTop").onclick=showFavs;$("#basketInquiry").onclick=basketInquiry;document.querySelectorAll("[data-close]").forEach(x=>x.onclick=()=>{$("#detail").hidden=true;document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favPanel").hidden=true;document.body.style.overflow=""});
 Promise.all([fetch("settings.json?"+Date.now()).then(r=>r.ok?r.json():SETTINGS).catch(()=>SETTINGS),fetch("products.json?"+Date.now()).then(r=>r.json())]).then(([cfg,a])=>{SETTINGS={...SETTINGS,...cfg};P=a.map(p=>({...p,status:p.status==="reserved"?"unavailable":p.status,images:Array.isArray(p.images)?p.images:[],tags:Array.isArray(p.tags)?p.tags:[]}));let cats=["전체",...SETTINGS.categories];$("#category").innerHTML=cats.map(c=>`<option value="${esc(c)}">${c==="전체"?"전체 카테고리":esc(c)}</option>`).join("");$("#status").innerHTML=`<option value="all">전체 상태</option>`+SETTINGS.statuses.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join("");updateFav();render()});
+
+let __pageResizeTimer;
+window.addEventListener("resize",()=>{
+  clearTimeout(__pageResizeTimer);
+  __pageResizeTimer=setTimeout(()=>{
+    const next=responsivePerPage();
+    if(next!==per){
+      const firstIndex=(page-1)*per;
+      per=next;
+      page=Math.floor(firstIndex/per)+1;
+      render();
+    }
+  },120);
+});

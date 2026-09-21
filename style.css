@@ -22,3 +22,203 @@ main{background:linear-gradient(180deg,#fffdf9e8,#fff9efe5);border:1px solid #ea
 .farm-banner{position:relative;z-index:1;min-height:94px;margin:-3px 0 15px;padding:15px 22px;display:flex;align-items:center;justify-content:center;gap:20px;text-align:center;border:1px solid #e7c9a8;border-radius:20px;background:linear-gradient(135deg,#fff1d9dd,#fff8e9e8 48%,#edf3d9dc);box-shadow:inset 0 0 0 4px #ffffff6e,0 5px 15px #745c3d0d;overflow:hidden}.farm-banner:before{content:"🥕  ·  🌿  ·  🥕  ·  🌿  ·  🥕";position:absolute;left:0;right:0;bottom:-4px;font-size:17px;letter-spacing:8px;opacity:.18;white-space:nowrap}.banner-copy span{display:block;font-size:11px;color:#9a7058;margin-bottom:3px}.banner-copy b{font-family:"Jua","Gowun Dodum",sans-serif;font-size:20px;font-weight:400;color:#6c4a36;letter-spacing:.2px}.banner-deco{font-size:34px;filter:drop-shadow(0 3px 3px #8c654c18)}
 .shop-notice{background:#fff8f0d9;border-color:#edd5c1;box-shadow:0 3px 10px #765a4210}.shop-notice b{font-family:"Gowun Dodum",sans-serif;color:#8d5d48}.search{background:#fffefa;border-color:#ead9cb;box-shadow:inset 0 1px 5px #8062470b}.filters select{font-family:"Gowun Dodum",sans-serif;background:#fffdf8;border-color:#ead9cb}.summary{background:linear-gradient(90deg,#fff0dcba,#f2f3dcb8);border-color:#ead2ae;color:#735441}.summary b{font-family:"Jua","Gowun Dodum",sans-serif;font-weight:400;font-size:16px}.card{border-color:#ead9c9;border-radius:18px;background:#fffdf9;box-shadow:0 5px 16px #806b5d13}.card:hover{box-shadow:0 12px 26px #6f58301f}.photo{background:linear-gradient(145deg,#fff4ed,#f7f0df)}.card h3{font-family:"Gowun Dodum",sans-serif;font-weight:800;color:#554039}.category{color:#aa9387}.status{background:#e5f2dc;color:#5b8753}.badge{font-family:"Jua",sans-serif;font-weight:400}.badge.new{background:#f2777d}.pages button{font-family:"Gowun Dodum",sans-serif;background:#fffaf2;box-shadow:0 2px 6px #6e503810}.pages button.on{background:#ef8c79}.crop-fallback{background:radial-gradient(circle at 50% 45%,#fffdf6 0 28%,#faeedc 62%,#f4e3ce 100%);filter:saturate(.92)}.basket-inquiry,.actions a{background:linear-gradient(135deg,#ef8c79,#f4a38c)}
 @media(max-width:760px){header{height:82px}.brand{padding:7px 11px 7px 9px;border-radius:14px}.brand b{font-size:22px}.brand-carrot{font-size:25px}.brand-sprout{font-size:15px}.icon-btn{width:45px;height:45px;font-size:26px}.farm-banner{min-height:76px;padding:11px 10px;gap:8px;border-radius:17px}.banner-copy span{font-size:9.5px}.banner-copy b{font-size:16px}.banner-deco{font-size:26px}.side-garden{width:38px;font-size:20px;opacity:.22;top:120px}.garden-bg{background:linear-gradient(180deg,#edf9f6 0 16%,#fff8eb 16% 78%,#edf2dc 78% 100%)}main{margin-top:9px}.summary b{font-size:14px}}
+
+
+/* ===== 감성 밭 디자인 V2 : 문구 추가 없이 순수 디자인만 변경 ===== */
+
+/* 더 둥글고 부드러운 한글 인상 */
+html,body,button,input,select{
+  font-family:"Jua","Gowun Dodum","Arial Rounded MT Bold","Malgun Gothic",sans-serif;
+}
+body{color:#4f4038}
+
+/* 단색 아이보리 대신 하늘-풀-흙이 아주 은은하게 이어지는 배경 */
+.garden-bg{
+  background:
+    radial-gradient(circle at 8% 23%,rgba(255,255,255,.82) 0 22px,transparent 23px),
+    radial-gradient(circle at 88% 15%,rgba(255,255,255,.72) 0 30px,transparent 31px),
+    linear-gradient(180deg,#e9f7f1 0 18%,#f9f4dc 18% 55%,#e9edca 55% 79%,#d8c69c 79% 100%);
+}
+.garden-bg:before{
+  content:"";
+  position:absolute;inset:18% 0 0;
+  background:
+    radial-gradient(circle at 15px 15px,rgba(255,255,255,.36) 0 2px,transparent 3px) 0 0/46px 46px,
+    linear-gradient(90deg,transparent 49%,rgba(120,151,86,.07) 50%,transparent 51%) 0 0/120px 100%;
+  opacity:.9;
+}
+.garden-bg:after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:0;height:22%;
+  background:
+    repeating-linear-gradient(168deg,transparent 0 35px,rgba(116,78,48,.08) 36px 52px,transparent 53px 88px),
+    linear-gradient(180deg,rgba(188,167,112,.08),rgba(150,113,75,.14));
+}
+
+/* 좌우는 이모지 줄 대신 덩굴/울타리처럼 보이게 */
+.side-garden{
+  width:72px;top:120px;bottom:45px;
+  font-size:27px;line-height:4.15;opacity:.48;
+  background:linear-gradient(90deg,rgba(112,151,84,.10),transparent);
+  border-radius:0 40px 40px 0;
+}
+.side-garden.right{
+  background:linear-gradient(270deg,rgba(112,151,84,.10),transparent);
+  border-radius:40px 0 0 40px;
+}
+.field-front{opacity:.38;filter:saturate(.75)}
+
+/* 헤더: 나무 팻말 느낌을 확실하게 */
+header{
+  background:rgba(255,251,244,.90);
+  border-bottom:1px solid #dfcfb9;
+  box-shadow:0 5px 18px rgba(103,77,48,.10);
+}
+.brand{
+  border:2px solid #b98258;
+  border-radius:18px 18px 15px 15px;
+  background:
+    linear-gradient(90deg,rgba(139,92,55,.06) 1px,transparent 1px) 0 0/18px 100%,
+    linear-gradient(180deg,#ffeac7,#f3cf9d);
+  box-shadow:inset 0 0 0 4px rgba(255,248,229,.62),0 4px 0 #b67a51,0 7px 14px rgba(91,60,37,.13);
+}
+.brand b{
+  font-family:"Jua","Arial Rounded MT Bold","Malgun Gothic",sans-serif;
+  font-weight:400;
+  color:#69422f;
+  letter-spacing:.4px;
+  text-shadow:0 1px 0 #fff7e8;
+}
+.brand small{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+
+/* 콘텐츠 판 자체도 유리한 흰 박스가 아니라 정원 종이/천 느낌 */
+main{
+  background:
+    radial-gradient(circle at 12px 12px,rgba(221,193,151,.11) 0 1.5px,transparent 2px) 0 0/24px 24px,
+    linear-gradient(180deg,rgba(255,253,246,.91),rgba(250,244,225,.90));
+  border:1px solid #dcc8aa;
+  box-shadow:0 18px 55px rgba(91,68,42,.14),0 0 0 7px rgba(255,255,255,.34);
+}
+main:before{
+  inset:10px;
+  border:2px dashed rgba(181,146,101,.26);
+  border-radius:18px;
+}
+
+/* 검색/필터도 딱딱한 흰 UI 대신 작은 정원 표지판 느낌 */
+.search,.filters select{
+  background:rgba(255,253,247,.92);
+  border:1.5px solid #ddc7aa;
+  box-shadow:0 3px 0 rgba(177,137,94,.10);
+}
+.search input,.filters select{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+.summary{
+  background:linear-gradient(90deg,rgba(246,225,188,.72),rgba(228,238,203,.72));
+  border:1px solid #d8c398;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.28);
+}
+.summary b{font-family:"Jua","Malgun Gothic",sans-serif;font-weight:400}
+
+/* 핵심: 상품 카드 하나하나를 '작은 밭 구획'처럼 */
+.card{
+  overflow:visible;
+  border:2px solid #b98c62;
+  border-radius:18px 18px 15px 15px;
+  background:#fffdf8;
+  box-shadow:
+    0 4px 0 #d5b58d,
+    0 9px 18px rgba(98,72,43,.10);
+}
+.card:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:8px;right:8px;top:-7px;
+  height:13px;
+  border-radius:50% 50% 45% 45%;
+  background:
+    radial-gradient(ellipse at 8px 7px,#87ad68 0 6px,transparent 6.5px) 0 0/22px 13px repeat-x;
+  opacity:.88;
+  pointer-events:none;
+}
+.card:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:7px;right:7px;bottom:-7px;height:11px;
+  border-radius:50%;
+  background:rgba(122,83,52,.15);
+  filter:blur(4px);
+}
+.card:hover{
+  transform:translateY(-4px) rotate(-.15deg);
+  box-shadow:0 5px 0 #d0ad82,0 14px 24px rgba(98,72,43,.14);
+}
+.photo{
+  margin:7px 7px 0;
+  border-radius:12px 12px 8px 8px;
+  border:1px solid rgba(181,145,105,.26);
+  background:
+    radial-gradient(circle at 20% 25%,rgba(255,255,255,.65) 0 2px,transparent 3px),
+    linear-gradient(180deg,#fff5e9,#f5ead4);
+}
+.card-info{
+  margin:0 6px 6px;
+  padding:10px 7px 9px;
+  border-radius:0 0 10px 10px;
+  background:rgba(255,254,249,.92);
+}
+.card h3{
+  font-family:"Jua","Malgun Gothic",sans-serif;
+  font-weight:400;
+  font-size:15px;
+  letter-spacing:.1px;
+}
+.category{font-family:"Gowun Dodum","Malgun Gothic",sans-serif}
+.price-wrap,.status{font-family:"Jua","Malgun Gothic",sans-serif}
+.heart{
+  z-index:4;
+  border:1px solid rgba(213,173,140,.45);
+  box-shadow:0 2px 7px rgba(102,74,45,.12);
+}
+
+/* 이미지가 없을 때 작물이 그냥 이모지 하나 떠있는 느낌이 덜하도록 흙 화분/밭 배경 */
+.crop-fallback{
+  position:relative;
+  background:
+    radial-gradient(ellipse at 50% 78%,#d8b488 0 22%,transparent 23%),
+    radial-gradient(ellipse at 50% 82%,#c99a68 0 31%,transparent 32%),
+    linear-gradient(180deg,#fff7e8 0 67%,#ead7b7 68% 100%);
+  text-shadow:0 4px 7px rgba(86,60,34,.12);
+}
+.crop-fallback:after{
+  content:"";
+  position:absolute;left:10%;right:10%;bottom:15%;
+  height:2px;
+  background:rgba(117,80,49,.12);
+  box-shadow:0 7px rgba(117,80,49,.08);
+}
+
+/* 페이지 버튼도 씨앗/돌멩이처럼 */
+.pages button{
+  background:#fff8e9;
+  border:1px solid #dec7a8;
+  box-shadow:0 3px 0 rgba(170,132,91,.12);
+}
+.pages button.on{
+  background:#e98f78;
+  border-color:#d97865;
+}
+
+/* 모바일에서도 장식이 답답하지 않도록 */
+@media(max-width:760px){
+  .side-garden{width:27px;font-size:17px;opacity:.18}
+  main{background:
+    radial-gradient(circle at 10px 10px,rgba(221,193,151,.10) 0 1px,transparent 1.5px) 0 0/20px 20px,
+    linear-gradient(180deg,rgba(255,253,246,.93),rgba(250,244,225,.91));
+  }
+  .card{border-width:1.5px;border-radius:16px}
+  .card:before{left:7px;right:7px;top:-5px;height:10px;background-size:18px 10px}
+  .photo{margin:6px 6px 0}
+  .card h3{font-size:14px}
+}
