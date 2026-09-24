@@ -15,16 +15,28 @@
   <div class="header-actions"><button class="icon-btn" id="favoritesBtn" title="내 바구니">🧺 <span id="favoriteCount">0</span></button></div>
 </header>
 <main>
-<section class="hero" id="shop">
- <div class="hero-copy"><p class="eyebrow">🥕 DANGNI'S LITTLE ITEM FIELD</p><h1>당그니네 <span>밭</span></h1></div>
- <div class="hero-art" aria-hidden="true"><div class="cloud cloud1">♡</div><div class="carrot carrot1">🥕</div><div class="carrot carrot2">🥕</div><div class="bunny">🐰</div><div class="sparkle s1">✦</div><div class="sparkle s2">♡</div><div class="grass">⌁⌁⌁</div></div>
+<section class="hero carrot-pattern-banner" id="shop" aria-label="당근 일러스트 배너">
+  <div class="pattern-carrot pc1"><span>•ᴗ•</span></div>
+  <div class="pattern-carrot pc2"><span>˶ᵔ ᵕ ᵔ˶</span></div>
+  <div class="pattern-carrot pc3"><span>⌐■_■</span></div>
+  <div class="pattern-carrot pc4"><span>•◡•</span></div>
+  <div class="pattern-carrot pc5"><span>ᵔᴗᵔ</span></div>
+  <div class="pattern-carrot pc6"><span>•̀ᴗ•́</span></div>
+  <div class="pattern-carrot pc7"><span>◕ᴗ◕</span></div>
+  <div class="pattern-carrot pc8"><span>•ᴗ•</span></div>
+  <div class="pattern-carrot pc9"><span>˘◡˘</span></div>
 </section>
 
 <div class="notice-fixed"><b>전체 상태 필터를 '판매중'으로 변경 후 쇼핑해주세요</b>'미판매' 상품의 경우 멤버십 미보유 계정에 있는 등의 사유로 아직 구매 불가한 아이템입니다. 추후 멤버십 결제시 구매 가능합니다.</div>
 
 <section class="shop-toolbar">
  <div class="search-wrap"><span>🔎</span><input id="searchInput" type="search" placeholder="어떤 작물을 찾고 있나요?" autocomplete="off"><button id="clearSearch" class="clear-search">×</button></div>
- <div class="filter-row"><div class="categories" id="categories"></div><div class="selects"><select id="statusFilter"></select></div></div>
+ <div class="filter-row">
+  <div class="selects filter-selects">
+    <label class="filter-box"><span>카테고리</span><select id="categoryFilter"></select></label>
+    <label class="filter-box"><span>판매 상태</span><select id="statusFilter"></select></label>
+  </div>
+</div>
 </section>
 
 <div class="result-line"><b>🌱 총 <span id="resultCount">0</span>개의 작물이 자라고 있어요!</b></div>

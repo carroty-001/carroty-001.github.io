@@ -454,3 +454,112 @@ footer small { font-size:9px; }
 @media(min-width:901px) and (max-width:1200px){.products-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(min-width:641px) and (max-width:900px){.products-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:640px){.products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{min-height:220px;padding:30px 6%}.hero-copy h1{font-size:30px}.nav{display:none}}
+
+
+/* === 2026-09-24 요청 수정 === */
+
+/* 검색 결과가 실제로 없을 때만 표시 */
+.empty-state.hidden{
+  display:none !important;
+}
+
+/* 문구 없는 '하나의 이미지 배너' 느낌의 당근 패턴 */
+.carrot-pattern-banner{
+  position:relative;
+  height:310px;
+  min-height:0;
+  overflow:hidden;
+  border:1px solid #f5d9c8;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255,255,255,.92) 0 32px, transparent 33px),
+    radial-gradient(circle at 78% 72%, rgba(255,255,255,.70) 0 24px, transparent 25px),
+    #fff7e8;
+  box-shadow:0 16px 38px rgba(148,88,48,.08);
+}
+.carrot-pattern-banner::before,
+.carrot-pattern-banner::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:#fffdf6;
+  opacity:.9;
+}
+.carrot-pattern-banner::before{width:110px;height:110px;left:46%;top:-38px}
+.carrot-pattern-banner::after{width:72px;height:72px;right:8%;bottom:-20px}
+
+.pattern-carrot{
+  position:absolute;
+  width:72px;
+  height:112px;
+  border-radius:48% 48% 58% 58% / 28% 28% 72% 72%;
+  background:linear-gradient(145deg,#ff9a39 0%,#ff751f 78%);
+  box-shadow:inset -7px -6px 0 rgba(215,84,15,.08), 0 9px 16px rgba(209,104,42,.10);
+  transform-origin:center;
+}
+.pattern-carrot::before{
+  content:"";
+  position:absolute;
+  width:19px;height:42px;
+  left:17px;top:-31px;
+  border-radius:90% 15% 90% 15%;
+  background:#42a843;
+  transform:rotate(-26deg);
+  box-shadow:20px 5px 0 #2f9638, 35px 15px 0 #58b64d;
+}
+.pattern-carrot span{
+  position:absolute;left:50%;top:40%;
+  transform:translate(-50%,-50%);
+  color:#6f3b27;font-size:13px;font-weight:900;white-space:nowrap;
+}
+.pc1{left:5%;top:-34px;transform:rotate(-20deg) scale(.9)}
+.pc2{left:18%;top:72px;transform:rotate(22deg) scale(1.12)}
+.pc3{left:34%;top:-25px;transform:rotate(7deg) scale(.82)}
+.pc4{left:47%;top:142px;transform:rotate(72deg) scale(.94)}
+.pc5{left:59%;top:28px;transform:rotate(-7deg) scale(1.05)}
+.pc6{left:72%;top:128px;transform:rotate(-55deg) scale(.9)}
+.pc7{left:84%;top:-12px;transform:rotate(28deg) scale(1.08)}
+.pc8{right:-1%;top:132px;transform:rotate(70deg) scale(1.0)}
+.pc9{left:2%;bottom:-64px;transform:rotate(68deg) scale(1.12)}
+
+/* 카테고리는 나열하지 않고 필터로 */
+.filter-row{display:block}
+.categories{display:none!important}
+.filter-selects{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(210px,1fr) minmax(180px,.7fr);
+  gap:12px;
+}
+.filter-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fffdfb;
+}
+.filter-box span{
+  flex:0 0 auto;
+  font-size:12px;
+  font-weight:800;
+  color:var(--orange-deep);
+}
+.filter-box select{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--brown);
+  font:inherit;
+  cursor:pointer;
+}
+@media(max-width:640px){
+  .carrot-pattern-banner{height:190px;border-radius:22px}
+  .pattern-carrot{width:48px;height:76px}
+  .pattern-carrot::before{width:13px;height:29px;left:11px;top:-22px;box-shadow:13px 4px 0 #2f9638,24px 10px 0 #58b64d}
+  .pattern-carrot span{font-size:9px}
+  .filter-selects{grid-template-columns:1fr}
+}
