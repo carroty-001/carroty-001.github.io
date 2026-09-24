@@ -563,3 +563,26 @@ footer small { font-size:9px; }
   .pattern-carrot span{font-size:9px}
   .filter-selects{grid-template-columns:1fr}
 }
+
+
+/* === 요청사항: 배너 일러스트만 첨부 이미지 그대로 교체 === */
+.carrot-pattern-banner{
+  background-image:url("images/dangni-rabbit-carrot-banner.jpg") !important;
+  background-repeat:no-repeat !important;
+  background-position:center center !important;
+  background-size:cover !important;
+  height:310px !important;
+}
+.carrot-pattern-banner::before,
+.carrot-pattern-banner::after{
+  display:none !important;
+}
+.carrot-pattern-banner .pattern-carrot{
+  display:none !important;
+}
+@media(max-width:640px){
+  .carrot-pattern-banner{
+    height:190px !important;
+    background-position:center center !important;
+  }
+}
