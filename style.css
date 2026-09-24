@@ -564,25 +564,29 @@ footer small { font-size:9px; }
   .filter-selects{grid-template-columns:1fr}
 }
 
-
-/* === 요청사항: 배너 일러스트만 첨부 이미지 그대로 교체 === */
+/* 두 번째 첨부 사진의 일러스트를 수정 없이 이미지 한 장으로 표시 */
 .carrot-pattern-banner{
-  background-image:url("images/dangni-rabbit-carrot-banner.jpg") !important;
-  background-repeat:no-repeat !important;
-  background-position:center center !important;
-  background-size:cover !important;
-  height:310px !important;
+  width:100% !important;
+  max-width:none !important;
+  height:auto !important;
+  aspect-ratio:1150 / 173 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:#fff7e8 url("images/rabbit-carrot-banner-exact.jpg") center center / 100% 100% no-repeat !important;
 }
 .carrot-pattern-banner::before,
-.carrot-pattern-banner::after{
-  display:none !important;
-}
+.carrot-pattern-banner::after,
 .carrot-pattern-banner .pattern-carrot{
   display:none !important;
 }
 @media(max-width:640px){
   .carrot-pattern-banner{
-    height:190px !important;
-    background-position:center center !important;
+    height:auto !important;
+    aspect-ratio:1150 / 173 !important;
+    background-size:100% 100% !important;
   }
 }
