@@ -31,7 +31,7 @@ $("#sortFilter").onchange=()=>{page=1;render()};
 $("#searchInput").oninput=()=>{page=1;render()};$("#clearSearch").onclick=()=>{$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
 document.querySelectorAll("[data-close-modal]").forEach(x=>x.onclick=()=>{$("#productModal").classList.add("hidden");document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favoritePanel").classList.add("hidden");document.body.style.overflow=""});
 let syncing=false;
-function syncMessage(t){$("#syncStatus").textContent=t}
+function syncMessage(t){}
 function applyProducts(a){
  P=a;SETTINGS.categories=[...new Set(P.map(p=>p.category).filter(Boolean))];
  if(!SETTINGS.categories.includes(cat))cat="전체";
