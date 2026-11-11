@@ -1,3 +1,4 @@
+function parseStatuses(value){const map={'판매중':'selling','판매완료':'soldout','미판매':'unavailable','세트판매':'set','selling':'selling','soldout':'soldout','unavailable':'unavailable','set':'set'};const a=Array.isArray(value)?value:String(value??'').split(/[,，、|;\n]+/);const result=[...new Set(a.map(v=>map[String(v).trim()]).filter(Boolean))];return result.length?result:['unknown']}
 // 상품 공개 열 A:L만 조회합니다. 재고메모(M열)는 요청하지 않습니다.
 function sheetProducts(table){
  const labels=table.cols.map(c=>String(c.label||'').trim());
@@ -8,7 +9,7 @@ function sheetProducts(table){
  return table.rows.filter(r=>String(get(r,'상품명')).trim()).map(r=>{
  const id='X'+String(get(r,'상품번호')).trim();if(id==='X'||ids.has(id))throw Error('상품번호 누락 또는 중복');ids.add(id);
  const date=get(r,'등록일'),m=String(date).match(/^Date\((\d+),(\d+),(\d+)\)$/);
- return {id,name:String(get(r,'상품명')).trim(),category:String(get(r,'카테고리')).trim(),price:num(get(r,'가격'),null),discount:Math.min(100,num(get(r,'할인율(%)'),0)),status:({'판매중':'selling','판매완료':'soldout','미판매':'unavailable'})[String(get(r,'판매상태')).trim()]||'unknown',image:image(get(r,'대표이미지')),images:parts(get(r,'추가이미지')).map(image),tags:parts(get(r,'태그')),description:String(get(r,'상품설명')),date:m?`${m[1]}-${String(+m[2]+1).padStart(2,'0')}-${m[3].padStart(2,'0')}`:String(date),kakao:''};
+ return {id,name:String(get(r,'상품명')).trim(),category:String(get(r,'카테고리')).trim(),price:num(get(r,'가격'),null),discount:Math.min(100,num(get(r,'할인율(%)'),0)),status:parseStatuses(get(r,'판매상태'))[0],statuses:parseStatuses(get(r,'판매상태')),image:image(get(r,'대표이미지')),images:parts(get(r,'추가이미지')).map(image),tags:parts(get(r,'태그')),description:String(get(r,'상품설명')),date:m?`${m[1]}-${String(+m[2]+1).padStart(2,'0')}-${m[3].padStart(2,'0')}`:String(date),kakao:''};
  });
 }
 let sheetRequest=0;

@@ -23,3 +23,5 @@ body{font-family:'Jua','Noto Sans KR',sans-serif;background:linear-gradient(135d
 
 /* 팻말 크기는 화면 너비와 무관하게 제한 */
 .farm-sign{width:120px;max-width:120px;flex:0 0 120px;align-self:center;overflow:hidden}.farm-sign svg{width:120px!important;max-width:100%!important;height:auto!important;max-height:106px!important;flex:none}.farm-board{min-width:0}.farm-board-content{min-width:0}@media(max-width:640px){.farm-sign{width:80px;max-width:80px;flex-basis:80px}.farm-sign svg{width:80px!important;max-height:71px!important}}
+
+.status-group{display:flex;flex-wrap:wrap;gap:5px}.product-info>.status-group{order:3;margin-top:2px}.status-badge.set{background:#ffdfb0;color:#9b5c18}
