@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "type": "notice",
+      "text": "작물의 판매 상태를 확인한 뒤 바구니에 담아주세요.",
+      "enabled": true
+    },
+    {
+      "type": "event",
+      "text": "새로운 밭 이벤트를 준비하고 있어요 🌱",
+      "enabled": true
+    }
+  ]
+}

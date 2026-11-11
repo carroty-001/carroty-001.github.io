@@ -53,3 +53,7 @@ startShop();
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per){page=Math.floor(first/per)+1;render()}},120)});
 
 addEventListener("keydown",e=>{if(e.key==="Escape"){["#productModal","#favoritePanel"].forEach(s=>$(s).classList.add("hidden"));document.body.style.overflow=""}});
+
+// 공지·이벤트 문구는 announcements.json에서 변경할 수 있습니다.
+async function loadFarmNews(){try{const r=await fetch('announcements.json?'+Date.now());if(!r.ok)return;const data=await r.json();if(!Array.isArray(data.items))return;const items=data.items.filter(x=>x.enabled!==false&&typeof x.text==='string'&&x.text.trim());$("#farmAnnouncements").innerHTML=items.length?items.map(x=>`<div class="farm-news-row"><span class="news-tag ${x.type==='event'?'event':''}">${x.type==='event'?'이벤트':'공지'}</span><p>${esc(x.text)}</p></div>`).join(''):'<div class="farm-news-row"><p>곧 새로운 밭 소식을 전해드릴게요 🌱</p></div>'}catch(e){}}
+loadFarmNews();
