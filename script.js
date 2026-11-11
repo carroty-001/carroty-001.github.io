@@ -30,7 +30,26 @@ async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filte
 $("#sortFilter").onchange=()=>{page=1;render()};
 $("#searchInput").oninput=()=>{page=1;render()};$("#clearSearch").onclick=()=>{$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
 document.querySelectorAll("[data-close-modal]").forEach(x=>x.onclick=()=>{$("#productModal").classList.add("hidden");document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favoritePanel").classList.add("hidden");document.body.style.overflow=""});
-Promise.all([fetch("settings.json?"+Date.now()).then(r=>r.ok?r.json():SETTINGS).catch(()=>SETTINGS),fetch("products.json?"+Date.now()).then(r=>r.json())]).then(([cfg,a])=>{SETTINGS={...SETTINGS,...cfg};P=a.map(p=>({...p,status:p.status==="reserved"?"unavailable":p.status,images:Array.isArray(p.images)?p.images:[],tags:Array.isArray(p.tags)?p.tags:[]}));let cats=["전체",...SETTINGS.categories];$("#categoryFilter").innerHTML=cats.map(c=>`<option value="${esc(c)}">${c==="전체"?"전체 카테고리":esc(c)}</option>`).join("");$("#categoryFilter").onchange=e=>{cat=e.target.value;page=1;render()};$("#statusFilter").innerHTML=`<option value="all">전체 상태</option>`+SETTINGS.statuses.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join("");saveFav();setPer();render()});
+let syncing=false;
+function syncMessage(t){$("#syncStatus").textContent=t}
+function applyProducts(a){
+ P=a;SETTINGS.categories=[...new Set(P.map(p=>p.category).filter(Boolean))];
+ if(!SETTINGS.categories.includes(cat))cat="전체";
+ $("#categoryFilter").innerHTML=["전체",...SETTINGS.categories].map(c=>`<option value="${esc(c)}">${c==="전체"?"전체 카테고리":esc(c)}</option>`).join("");$("#categoryFilter").value=cat;
+ render();if(!$("#favoritePanel").classList.contains("hidden"))showFav();
+ if(!$("#productModal").classList.contains("hidden")){let id=$("#modalId").textContent;if(P.some(p=>p.id===id))openDetail(id);else{$("#productModal").classList.add("hidden");document.body.style.overflow=""}}
+}
+async function refreshSheet(){if(syncing)return;syncing=true;try{applyProducts(await fetchSheetProducts());syncMessage('🌱 작물 정보가 새로 반영됐어요')}catch(e){syncMessage('🌱 시트 연결이 잠시 지연되어 마지막 작물 정보를 보여드려요')}finally{syncing=false}}
+async function startShop(){
+ try{const r=await fetch('settings.json?'+Date.now());if(r.ok)SETTINGS={...SETTINGS,...await r.json()}}catch(e){}
+ $("#statusFilter").innerHTML='<option value="all">전체 상태</option>'+SETTINGS.statuses.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join('');
+ $("#categoryFilter").onchange=e=>{cat=e.target.value;page=1;render()};saveFav();setPer();
+ try{const r=await fetch('products.json?'+Date.now());if(r.ok)applyProducts(await r.json())}catch(e){}
+ await refreshSheet();setInterval(()=>{if(!document.hidden)refreshSheet()},180000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSheet()});
+}
+startShop();
+
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per){page=Math.floor(first/per)+1;render()}},120)});
 
 addEventListener("keydown",e=>{if(e.key==="Escape"){["#productModal","#favoritePanel"].forEach(s=>$(s).classList.add("hidden"));document.body.style.overflow=""}});

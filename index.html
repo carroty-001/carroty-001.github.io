@@ -30,7 +30,7 @@
 </section>
 
 <div class="result-line"><b>🌱 <span id="resultCount">0</span>개의 작물이 자라나고 있어요!</b><span>마음에 드는 작물을 장바구니에 담아보세요 🧺</span></div>
-<section class="content-grid"><div class="products-area" style="grid-column:1/-1"><div class="products-grid" id="products"></div>
+<p class="sync-status" id="syncStatus" role="status">🌱 작물 정보를 불러오고 있어요</p><section class="content-grid"><div class="products-area" style="grid-column:1/-1"><div class="products-grid" id="products"></div>
 <div class="empty-state hidden" id="emptyState"><div>🥕</div><h3>앗, 아직 이 밭에는 없어요!</h3></div>
 <div class="pagination" id="pagination"></div></div></section>
 </main>
@@ -45,4 +45,4 @@
 <div class="favorite-panel hidden" id="favoritePanel"><div class="favorite-backdrop" data-fav-close></div><div class="favorite-card">
 <div class="favorite-head"><h2>🛒 내 바구니</h2><button class="favorite-close" data-fav-close>×</button></div>
 <div class="favorite-list" id="favoriteList"></div><button class="basket-inquiry" id="basketInquiry">담은 작물 한 번에 문의하기</button><div class="copy-hint" id="copyHint"></div></div></div>
-<div class="toast" id="toast"></div><script src="script.js"></script></body></html>
+<div class="toast" id="toast"></div><script src="sheet-sync.js"></script><script src="script.js"></script></body></html>

@@ -16,3 +16,5 @@ body{font-family:'Jua','Noto Sans KR',sans-serif;background:linear-gradient(135d
 
 /* 손글씨 배너와 작물 이모티콘 */
 .logo strong{font-family:'Gamja Flower','Jua',cursive;font-size:36px;font-weight:400;letter-spacing:1px;line-height:1.05;text-shadow:0 2px 0 #355f3226}.logo-carrot{font-size:36px}.logo small{margin-top:6px}.crop-fallback{font-size:55px}.thumb .crop-fallback{font-size:28px}@media(max-width:640px){.logo strong{font-size:29px}.logo-carrot{font-size:29px}}
+
+.sync-status{font-size:12px;color:#7c8c68;margin:0 0 12px}
