@@ -1,13 +1,13 @@
-DANGNI SHOP 사용법
+당그니네 밭 — 주황·초록 디자인 수정본
 
-1. index.html을 브라우저에서 열면 사이트를 볼 수 있습니다.
-2. 상품은 products.json에서 관리합니다.
-3. 각 상품의 emoji를 실제 이미지로 바꾸고 싶다면 다음 버전에서 image 필드를 추가해 확장할 수 있습니다.
-4. 실제 문의 링크는 script.js의 contactBtn / modalContact 부분에 원하는 링크를 넣으면 됩니다.
-5. GitHub Pages에 올릴 때 이 폴더 안의 파일을 그대로 GitHub 저장소에 업로드하세요.
+배너 이미지 삭제 / PC 5열·모바일 2열 / 가격 정렬 추가
+검색·카테고리·판매 상태·찜·상품 상세·문의·페이지네이션 유지
+products.json과 settings.json은 원본 그대로입니다.
 
-상품 데이터 형식:
-id, name, category, price, status(selling/reserved/soldout), emoji, tags, description, date
+적용 방법
+1. GitHub 저장소에 index.html, style.css, script.js를 덮어쓰세요.
+2. 기존 images 폴더는 삭제하지 마세요. 첨부 원본 ZIP에도 상품 이미지 파일이 없었습니다.
+3. dangni-rabbit-carrot-banner.jpg와 rabbit-carrot-banner-exact.jpg는 더 이상 사용하지 않으므로 삭제해도 됩니다.
+4. GitHub Pages 반영 후 새로고침하세요(Ctrl+F5).
 
-추천:
-850개 상품을 넣을 때는 엑셀/CSV에서 데이터를 정리한 뒤 products.json으로 변환하면 편합니다.
+로컬 확인은 이 폴더에서 python -m http.server 실행 후 localhost:8000 접속.
