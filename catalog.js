@@ -99,7 +99,7 @@ const FurnitureData = (() => {
       const rows = model.series.filter(s => (s.name + ' ' + s.id).toLowerCase().includes(state.seriesQuery.trim().toLowerCase()));
       const pages = Math.max(1, Math.ceil(rows.length / 24)); state.seriesPage = Math.min(state.seriesPage, pages);
       root.innerHTML = `<div class="furniture-search"><span aria-hidden="true">🔎</span><input id="seriesSearch" type="search" aria-label="가구 시리즈 검색" placeholder="시리즈 이름으로 찾아보세요" value="${escape(state.seriesQuery)}"></div><div class="furniture-series-grid">${rows.slice((state.seriesPage-1)*24,state.seriesPage*24).map(s => {
-        return `<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><h3>${escape(s.name)}</h3><span class="furniture-open">가구 둘러보기 <span aria-hidden="true">↗</span></span></div></button>`;
+        return `<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><h3>${escape(s.name)}</h3></div></button>`;
       }).join('')}</div>${!rows.length?'<p class="furniture-empty">찾는 시리즈가 없어요.</p>':''}${pageButtons(pages,state.seriesPage)}`;
       root.querySelectorAll('[data-series]').forEach(b => b.onclick = () => {state.seriesId=b.dataset.series;state.page=1;render();});
       bindSearch('#seriesSearch','seriesQuery');
