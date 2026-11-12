@@ -176,7 +176,7 @@ const FurnitureData = (() => {
   }
   async function init() {
     try {
-      const [catalogResponse,configResponse]=await Promise.all([fetch('furniture/catalog.json?'+Date.now()),fetch('furniture/config.json?'+Date.now())]);
+      const [catalogResponse,configResponse]=await Promise.all([fetch('catalog.json?'+Date.now()),fetch('config.json?'+Date.now())]);
       if(!catalogResponse.ok||!configResponse.ok)throw Error('가구 파일을 불러오지 못했어요.');
       config=await configResponse.json();setData(await catalogResponse.json());
       if(config.sheets.enabled){try{const cached=JSON.parse(localStorage.getItem('dangniFurniture:'+config.sheets.spreadsheetId));if(cached)setData(cached);}catch(e){}}

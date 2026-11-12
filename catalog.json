@@ -4,7 +4,7 @@
     {
       "id": "F001",
       "name": "깊은 빨간 맨션",
-      "image": "furniture/assets/F001.png",
+      "image": "F001.png",
       "totalCount": 25,
       "description": ""
     }
@@ -20,7 +20,7 @@
     {
       "id": "F001_01",
       "seriesId": "F001",
-      "image": "furniture/assets/F001_01.png",
+      "image": "F001_01.png",
       "grade": 5,
       "price": null,
       "stock": 1,
