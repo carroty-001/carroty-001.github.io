@@ -7,10 +7,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=farm-owner-20261113-1">
-</head>
+<style>
+/* Farm header wording/layout only; existing product styles remain unchanged. */
+.header .logo{display:inline-flex;align-items:center;gap:12px;min-width:0;white-space:nowrap}
+.header .logo strong{display:inline-block;white-space:nowrap}
+.header .logo small{display:inline-block;margin:0;align-self:center;white-space:nowrap;font-size:10px;letter-spacing:1.2px;line-height:1.2;opacity:.9}
+@media(max-width:640px){.header .logo{gap:6px}.header .logo small{font-size:8px;letter-spacing:.5px}}
+@media(max-width:390px){.header .logo strong{font-size:24px}.header .logo small{font-size:7px;letter-spacing:.2px}}
+</style></head>
 <body><div class="site-bg">
 <header class="header">
-  <a class="logo" href="#"><span class="logo-carrot">🥕</span><span><strong>당그니네 밭</strong><small>DANGNI FARM</small></span></a>
+  <a class="logo" href="#"><strong>당그니네 밭</strong><small>DANGGI FARM</small></a>
   <div class="header-actions"><button class="icon-btn" id="favoritesBtn" title="바구니 보기" aria-label="바구니 보기">🧺 내 바구니 <span id="favoriteCount">0</span></button></div>
 </header>
 <main id="shop">
@@ -51,4 +58,4 @@
 <div class="favorite-panel hidden" id="favoritePanel"><div class="favorite-backdrop" data-fav-close></div><div class="favorite-card">
 <div class="favorite-head"><h2>🧺 내 바구니</h2><button class="favorite-close" data-fav-close>×</button></div>
 <div class="favorite-list" id="favoriteList"></div><button class="basket-inquiry" id="basketInquiry">담은 작물 한 번에 문의하기</button><div class="copy-hint" id="copyHint"></div></div></div>
-<div class="toast" id="toast"></div><script src="sheet-sync.js?v=detail-images-20261113-1"></script><script src="script.js?v=basket-labels-20261113-1"></script></body></html>
+<div class="toast" id="toast"></div><script src="sheet-sync.js?v=detail-images-20261113-1"></script><script src="script.js?v=pagination-20261113-v7"></script></body></html>

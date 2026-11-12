@@ -90,7 +90,7 @@ const FurnitureData = (() => {
   const pageButtons = (count, current) => {
     const start = Math.max(1, Math.min(current - 1, count - 3));
     const numbers = Array.from({length:Math.min(4,count)}, (_, n) => n + start);
-    return `<nav class="furniture-pages" aria-label="가구 페이지"><button data-page="${current-1}" ${current===1?'disabled':''} aria-label="이전 페이지">‹</button>${numbers.map(n=>`<button data-page="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`).join('')}<button data-page="${current+1}" ${current===count?'disabled':''} aria-label="다음 페이지">›</button><span>${current} / ${count}</span></nav>`;
+    return `<nav class="furniture-pages" aria-label="가구 페이지"><button data-page="1" ${current===1?'disabled':''} aria-label="첫 페이지로 이동">&lt;</button>${numbers.map(n=>`<button data-page="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`).join('')}<button data-page="${count}" ${current===count?'disabled':''} aria-label="마지막 페이지로 이동">&gt;</button><span>${current} / ${count}</span></nav>`;
   };
   function render() {
     if (state.tab !== 'furniture' || !model) return;

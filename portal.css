@@ -24,3 +24,9 @@ iframe[hidden]{display:none}
 .no-script{position:fixed;left:100px;bottom:12px;background:white;padding:12px;border:1px solid #e2d6bf;border-radius:9px}
 @media(max-width:900px){body{grid-template-columns:78px minmax(0,1fr)}.bookmarks{padding:16px 0 10px 5px}.portal-brand{padding-right:5px}.portal-brand strong{font-size:20px}.bookmark{min-height:72px;font-size:16px}.tab-art{width:38px;height:38px}.bookmarks nav{gap:6px}}
 @media(max-width:600px){body{grid-template-columns:59px minmax(0,1fr)}.bookmarks{padding:13px 0 8px 3px}.portal-brand{padding:0 3px 9px 0}.portal-brand strong{font-size:15px;letter-spacing:-.9px}.bookmarks nav{gap:5px;margin-top:2px}.bookmark{min-height:63px;gap:2px;padding:5px 0 4px;font-size:13px;border-radius:6px 0 0 6px}.tab-art{width:32px;height:32px}.no-script{left:64px}}
+
+/* Illustrated bookmark tabs: only drawings are visible; names stay accessible. */
+.bookmark{min-height:68px;gap:0;padding:8px 2px;line-height:1}
+.tab-art{width:47px;height:47px}
+@media(max-width:900px){.bookmark{min-height:64px;padding:7px 1px}.tab-art{width:43px;height:43px}}
+@media(max-width:600px){.bookmark{min-height:58px;padding:6px 0}.tab-art{width:37px;height:37px}}

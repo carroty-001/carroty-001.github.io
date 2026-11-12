@@ -5,3 +5,25 @@ body{background:linear-gradient(135deg,#fff7e8,#faf7ed 65%,#eff3e5);min-height:1
 /* Compact collection cards after removing redundant English labels and counts. */
 .furniture-series-info h3{margin:0 0 12px}
 .furniture-title-icon{font-size:.8em;line-height:1}
+
+/* 2026-11-13: lighter mart banner and calm, readable type. Farm is not affected. */
+body,button,input,select,textarea{font-family:'Gowun Dodum','Noto Sans KR',sans-serif}
+.furniture-page{padding-top:22px}
+.furniture-page-header{padding:13px 22px;gap:16px;min-height:78px;border-radius:14px}
+.furniture-page-header h1{font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:29px;font-weight:700;line-height:1.25;letter-spacing:-.7px;margin:0;color:#536c47;display:block}
+.furniture-page-kicker{display:block;margin-top:4px;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:10px;letter-spacing:1.4px;line-height:1.3;color:#8b997b}
+.furniture-page-basket{font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-weight:700;font-size:13px;padding:9px 13px;border-radius:9px}
+.furniture-heading h2,.furniture-series-banner h2,.furniture-series-info h3{font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-weight:700;letter-spacing:-.6px}
+.furniture-series-info h3{font-size:20px;line-height:1.4}
+.furniture-series-banner h2{font-size:24px}
+.furniture-open,.furniture-back,.furniture-item-price,.furniture-stock,.furniture-add,.furniture-result,.furniture-search input{font-family:'Gowun Dodum','Noto Sans KR',sans-serif}
+@media(max-width:700px){.furniture-page{padding-top:14px}.furniture-page-header{padding:11px 13px;min-height:68px;gap:9px}.furniture-page-header h1{font-size:23px}.furniture-page-kicker{font-size:9px;margin-top:3px;letter-spacing:1px}.furniture-page-basket{font-size:11px;padding:8px 9px}.furniture-series-info h3{font-size:18px}.furniture-series-banner h2{font-size:21px}}
+@media(max-width:390px){.furniture-page-header{padding:10px 11px;flex-wrap:nowrap}.furniture-page-header h1{font-size:21px}.furniture-page-basket{margin-left:0;padding:7px 8px;font-size:10px}}
+
+/* Compact inline bilingual banner, matching the farm title layout. */
+.furniture-page-header{padding:11px 21px;min-height:67px}
+.furniture-page-title{display:flex;align-items:center;gap:13px;min-width:0;white-space:nowrap}
+.furniture-page-title h1{margin:0;white-space:nowrap}
+.furniture-page-title .furniture-page-kicker{display:inline-block;margin:0;font-size:10px;line-height:1.2;letter-spacing:1px;white-space:nowrap}
+@media(max-width:700px){.furniture-page-header{min-height:62px;padding:10px 12px}.furniture-page-title{gap:7px}.furniture-page-title .furniture-page-kicker{font-size:8px;letter-spacing:.5px}}
+@media(max-width:390px){.furniture-page-header{padding:9px 10px}.furniture-page-title h1{font-size:19px}.furniture-page-title .furniture-page-kicker{font-size:7px;letter-spacing:0}}

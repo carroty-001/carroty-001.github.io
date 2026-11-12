@@ -10,7 +10,7 @@
       frame.hidden=name!==selected;
     });
     links.forEach(link=>{if(link.dataset.shop===selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')});
-    document.title=selected==='farm'?'당그니네밭':'🛒 당그니네 마트';
+    document.title=selected==='farm'?'🥕 당그니네 밭':'🛒 당그니네 마트';
   }
   // The original farm's inquiry button navigates the document. In browsers
   // offering Navigation API, preserve that full-page external navigation.
