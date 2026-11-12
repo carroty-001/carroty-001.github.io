@@ -109,3 +109,78 @@ body,button,input,select,textarea{font-family:'Gowun Dodum','Noto Sans KR',sans-
   .mart-work-notice p { font-size: 12px; }
   .mart-work-notice p span { display: block; }
 }
+
+/* ── 2026-11-13: old-fashioned corner grocery, peach palette ── */
+:root { --cream:#fff6ed; --ink:#644735; --muted:#977a69; --line:#efcbb0; --green:#ad7750; --orange:#e99662; --orange-dark:#985c39; }
+html { background:#ffead8; }
+body { color:#644735; background:linear-gradient(135deg,#ffead7 0%,#fff1e5 52%,#ffe4d2 100%); }
+body,button,input,select,textarea { font-family:'Gowun Dodum','Noto Sans KR',sans-serif; }
+.furniture-page { max-width:1300px; padding-top:19px; }
+/* Warm yellow market sign with pink/cream awning, without a cart in the banner. */
+.furniture-page-header {
+  min-height:90px;
+  padding:33px 22px 12px;
+  border:2px solid #e6ad83;
+  border-radius:14px;
+  background-color:#ffe6a3;
+  background-image:linear-gradient(90deg,rgba(255,255,255,.18) 50%,transparent 50%),
+    linear-gradient(0deg,rgba(255,255,255,.18) 50%,transparent 50%);
+  background-size:32px 32px;
+  box-shadow:inset 0 1px 0 #fffaf1,0 3px 8px rgba(173,103,63,.1);
+  color:#825138;
+}
+.furniture-page-header::before {
+  content:'';
+  position:absolute;
+  left:0;right:0;top:0;
+  height:23px;
+  border-bottom:2px solid #e79592;
+  border-radius:11px 11px 10px 10px;
+  background:repeating-linear-gradient(90deg,#fffaf3 0 23px,#efa4a6 23px 46px);
+  box-shadow:0 2px 0 rgba(255,255,255,.6);
+  pointer-events:none;
+}
+.furniture-page-header h1 { color:#885438; text-shadow:0 1px 0 #fffaf0; font-weight:700; }
+.furniture-page-title .furniture-page-kicker { color:#a66f55; font-weight:700; }
+.furniture-page-basket { display:inline-flex;align-items:center;gap:5px;border:1px solid #dfaa8c;background:#fffaf4;color:#87553b;box-shadow:0 2px 0 #efcfb7; }
+.furniture-page-basket span#furnitureBasketCount { background:#ffe3cc;color:#885438;margin-left:0; }
+.mart-cart-icon {font-size:17px;line-height:1;flex:none;}
+.mart-work-notice { background:linear-gradient(95deg,#fffaf3,#ffecde); border:1px dashed #e8b59d;color:#815b47;box-shadow:none; }
+.mart-work-notice-label {background:#f6bdba;color:#774b42;}
+.furniture-search { background:#fffaf5;border:1.5px solid #e8b899;box-shadow:0 2px 0 rgba(220,164,128,.13); }
+.furniture-search>span { color:#bb8065;font-size:21px;line-height:1; }
+.furniture-search input {color:#624b3d;}
+.furniture-series-card,.furniture-item {background:#fffaf4;border:1.5px solid #ebc4a8;box-shadow:0 3px 0 rgba(209,148,111,.10);}
+.furniture-series-card:hover {box-shadow:0 6px 14px rgba(187,119,83,.14);}
+.furniture-series-photo {background:#fff0dd;}
+.furniture-series-info h3,.furniture-series-banner h2 {color:#8a563e;}
+.furniture-series-banner {background:#fff9f1;border:1.5px solid #e9bfa1;}
+.furniture-back,.furniture-result,.furniture-stock {color:#986e56;}
+.furniture-item-picture {background:#fff1e4;}
+.furniture-item-price,.modal-price .product-price {color:#a25d3d;font-weight:700;}
+.furniture-add {background:#f7c6c1;border:1px solid #eaa8a1;color:#71483f;font-weight:700;}
+.furniture-add:hover:not(:disabled) {background:#f3b9b3;}
+.furniture-add.selected {background:#b87969;border-color:#b87969;color:white;}
+.furniture-add:disabled {background:#f4e9e0;color:#ae9a8b;border-color:#ead7c9;}
+.furniture-pages button {background:#fffaf5;border-color:#e9c7ae;color:#885b43;}
+.furniture-pages button[aria-current="page"] {background:#f4b8b2;border-color:#e5a6a0;color:#673e38;}
+.furniture-pages span {color:#a7826a;}
+.furniture-empty,.furniture-loading {color:#a18470;}
+.furniture-photo-fallback {background:#fff0df;color:#b08a6b;}
+.modal-card,.favorite-card {background:#fff7ef;}
+.primary-btn,.basket-inquiry {background:#b87969;color:#fff;}
+.secondary-btn {background:#ffdfcb;color:#915d43;}
+@media(max-width:700px) {
+ .furniture-page-header {min-height:80px;padding:29px 12px 10px;}
+ .furniture-page-header::before {height:19px;background:repeating-linear-gradient(90deg,#fffaf3 0 15px,#efa4a6 15px 30px);}
+ .furniture-page-header h1 {font-size:22px;}
+ .furniture-page-title .furniture-page-kicker {font-size:8px;}
+ .mart-cart-icon {font-size:14px;}
+}
+@media(max-width:390px) {
+ .furniture-page-header {gap:5px;}
+ .furniture-page-header h1 {font-size:18px;}
+ .furniture-page-basket {font-size:10px;padding:7px 5px;gap:2px;}
+ .furniture-page-title {gap:4px;}
+ .furniture-page-title .furniture-page-kicker {font-size:7px;}
+}

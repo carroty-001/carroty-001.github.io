@@ -92,17 +92,25 @@ const FurnitureData = (() => {
     const numbers = Array.from({length:Math.min(4,count)}, (_, n) => n + start);
     return `<nav class="furniture-pages" aria-label="가구 페이지"><button data-page="1" ${current===1?'disabled':''} aria-label="첫 페이지로 이동">&lt;</button>${numbers.map(n=>`<button data-page="${n}" ${n===current?'aria-current="page"':''}>${n}</button>`).join('')}<button data-page="${count}" ${current===count?'disabled':''} aria-label="마지막 페이지로 이동">&gt;</button><span>${current} / ${count}</span></nav>`;
   };
+  function renderSeriesResults() {
+    const results=$f('#seriesResults');
+    if (!results || !model || state.seriesId) return;
+    const rows=model.series.filter(s=>(s.name+' '+s.id).toLowerCase().includes(state.seriesQuery.trim().toLowerCase()));
+    const pages=Math.max(1,Math.ceil(rows.length/24));
+    state.seriesPage=Math.min(state.seriesPage,pages);
+    results.innerHTML=`<div class="furniture-series-grid">${rows.slice((state.seriesPage-1)*24,state.seriesPage*24).map(s=>`<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><h3>${escape(s.name)}</h3></div></button>`).join('')}</div>${!rows.length?'<p class="furniture-empty">찾는 시리즈가 없어요.</p>':''}${pageButtons(pages,state.seriesPage)}`;
+    results.querySelectorAll('[data-series]').forEach(b=>b.onclick=()=>{state.seriesId=b.dataset.series;state.page=1;render();});
+    results.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{state.seriesPage=+b.dataset.page;renderSeriesResults();$f('#furnitureShop').scrollIntoView({behavior:'smooth',block:'start'});});
+  }
   function render() {
     if (state.tab !== 'furniture' || !model) return;
     const root = $f('#furnitureContent');
     if (!state.seriesId) {
-      const rows = model.series.filter(s => (s.name + ' ' + s.id).toLowerCase().includes(state.seriesQuery.trim().toLowerCase()));
-      const pages = Math.max(1, Math.ceil(rows.length / 24)); state.seriesPage = Math.min(state.seriesPage, pages);
-      root.innerHTML = `<div class="furniture-search"><span aria-hidden="true">🔎</span><input id="seriesSearch" type="search" aria-label="가구 시리즈 검색" placeholder="시리즈 이름으로 찾아보세요" value="${escape(state.seriesQuery)}"></div><div class="furniture-series-grid">${rows.slice((state.seriesPage-1)*24,state.seriesPage*24).map(s => {
-        return `<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><h3>${escape(s.name)}</h3></div></button>`;
-      }).join('')}</div>${!rows.length?'<p class="furniture-empty">찾는 시리즈가 없어요.</p>':''}${pageButtons(pages,state.seriesPage)}`;
-      root.querySelectorAll('[data-series]').forEach(b => b.onclick = () => {state.seriesId=b.dataset.series;state.page=1;render();});
+      // 검색창은 최초 렌더 때만 생성하고, 입력 중에는 결과 영역만 갱신해
+      // 한글 IME 조합(ㄱ+ㅣ+ㅍ...)을 끊지 않습니다.
+      root.innerHTML = `<div class="furniture-search"><span aria-hidden="true">⌕</span><input id="seriesSearch" type="search" aria-label="가구 시리즈 검색" placeholder="시리즈 이름으로 찾아보세요" value="${escape(state.seriesQuery)}" autocomplete="off"></div><div id="seriesResults"></div>`;
       bindSearch('#seriesSearch','seriesQuery');
+      renderSeriesResults();
     } else {
       const s = model.seriesMap.get(state.seriesId);
       if (!s) {state.seriesId='';render();return;}
@@ -113,11 +121,16 @@ const FurnitureData = (() => {
       root.querySelectorAll('[data-detail]').forEach(b=>b.onclick=()=>openItem(b.dataset.detail));
       root.querySelectorAll('[data-basket]').forEach(b=>b.onclick=()=>toggle(b.dataset.basket));
     }
-    root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(state.seriesId)state.page=+b.dataset.page;else state.seriesPage=+b.dataset.page;render();$f('#furnitureShop').scrollIntoView({behavior:'smooth',block:'start'});});
+    if (state.seriesId) root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{state.page=+b.dataset.page;render();$f('#furnitureShop').scrollIntoView({behavior:'smooth',block:'start'});});
   }
   function bindSearch(selector,key) {
     const input=$f(selector);
-    input.oninput=()=>{state[key]=input.value;clearTimeout(timer);timer=setTimeout(()=>{state.page=state.seriesPage=1;render();const next=$f(selector);next.focus();},180);};
+    // 입력창 DOM을 교체하거나 focus()를 다시 호출하지 않습니다.
+    // 조합 중에는 상태만 저장하고, 조합이 끝난 뒤 결과만 갱신합니다.
+    let composing=false;
+    input.addEventListener('compositionstart',()=>{composing=true;});
+    input.addEventListener('compositionend',()=>{composing=false;state[key]=input.value;state.seriesPage=1;renderSeriesResults();});
+    input.addEventListener('input',()=>{state[key]=input.value;if(!composing){state.seriesPage=1;renderSeriesResults();}});
   }
   function openItem(id) {
     const i=model?.itemMap.get(id); if(!i)return;

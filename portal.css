@@ -30,3 +30,10 @@ iframe[hidden]{display:none}
 .tab-art{width:47px;height:47px}
 @media(max-width:900px){.bookmark{min-height:64px;padding:7px 1px}.tab-art{width:43px;height:43px}}
 @media(max-width:600px){.bookmark{min-height:58px;padding:6px 0}.tab-art{width:37px;height:37px}}
+
+/* Outer frame: gentle peach, without touching farm page internals. */
+body {background:#fff0e3;}
+.bookmarks {background:#fff0e3;border-right-color:#e9c9b4;}
+.shop-window,iframe {background:#fff0e3;}
+.bookmark[aria-current="page"],.bookmark[data-shop="furniture"][aria-current="page"] {background:#fff0e3;}
+.bookmark[aria-current="page"]::after {background:#fff0e3;}
