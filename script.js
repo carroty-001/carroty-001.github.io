@@ -20,7 +20,7 @@ function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render()}
 function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="바구니에 담기" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${F.has(p.id)?"✓":"🛒"}</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]"))openDetail(c.dataset.id)});
-let s=Math.max(1,page-4),e=Math.min(pages,s+9);s=Math.max(1,e-9);
+let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
 $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이지 · 한 페이지에 ${per}개 작물</div><div class="page-buttons">`+pb(1,'«','첫 페이지',page===1)+pb(Math.max(1,page-1),'‹','이전 페이지',page===1)+Array.from({length:e-s+1},(_,i)=>s+i).map(n=>`<button class="${n===page?"on":""}" data-p="${n}" aria-label="${n} 페이지" ${n===page?'aria-current="page"':''}>${n}</button>`).join("")+pb(Math.min(pages,page+1),'›','다음 페이지',page===pages)+pb(pages,'»','마지막 페이지',page===pages)+`</div><form class="page-jump" id="pageJump"><label for="pageNumber">페이지 바로 가기</label><input id="pageNumber" type="number" inputmode="numeric" min="1" max="${pages}" value="${page}" aria-label="이동할 페이지 번호" required><button type="submit">이동</button></form>`;
 const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(0,document.querySelector(".shop-toolbar").offsetTop-24),behavior:"smooth"})};
@@ -53,7 +53,7 @@ async function startShop(){
 }
 startShop();
 
-let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per){page=Math.floor(first/per)+1;render()}},120)});
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per)page=Math.floor(first/per)+1;render()},120)});
 
 addEventListener("keydown",e=>{if(e.key==="Escape"){["#productModal","#favoritePanel"].forEach(s=>$(s).classList.add("hidden"));document.body.style.overflow=""}});
 
