@@ -43,3 +43,11 @@ body{font-family:'Jua','Noto Sans KR',sans-serif;background:linear-gradient(135d
 
 /* 상품 카드 바구니 버튼: 기본 버튼 여백과 글자 기준선 치우침 제거 */
 .heart{display:flex;align-items:center;justify-content:center;padding:0;line-height:1;text-align:center}
+
+/* 캐릭터가 들어간 나무 팻말 */
+.farm-board{align-items:center;gap:22px;padding:14px 22px 12px 14px}
+.farm-owner-wood{flex:0 0 140px;width:140px;display:flex;align-items:center;justify-content:center}
+.farm-owner-wood svg{display:block;width:100%;height:auto;max-height:164px}
+.farm-board-content .farm-news-row:first-child{margin-top:0}
+.farm-board-content .farm-news-row:last-child{margin-bottom:0}
+@media(max-width:640px){.farm-board{gap:12px;padding:12px 12px 10px 8px}.farm-owner-wood{flex-basis:90px;width:90px}.farm-owner-wood svg{max-height:106px}}

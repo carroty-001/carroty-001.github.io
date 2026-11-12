@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=detail-images-20261113-1">
+<link rel="stylesheet" href="style.css?v=wooden-owner-20261113-1">
 </head>
 <body><div class="site-bg">
 <header class="header">
@@ -18,9 +18,9 @@
 
 <div class="notice-fixed"><b>전체 상태 필터를 '판매중'으로 변경 후 쇼핑해주세요</b>'미판매' 상품의 경우 멤버십 미보유 계정에 있는 등의 사유로 아직 구매 불가한 작물입니다. 추후 멤버십 결제시 구매 가능합니다.</div>
 
-<section class="farm-board" aria-labelledby="boardTitle">
- <div class="farm-sign"><svg width="140" height="124" style="width:100%;max-width:140px;height:auto;max-height:124px" viewBox="0 0 170 150" role="img" aria-label="당근밭 나무 팻말"><path d="M80 73h13v73H80z" fill="#af8158"/><path d="M86 75v69" stroke="#916744" stroke-width="2"/><path d="M15 18Q15 12 23 12h124q8 0 8 7v67q0 7-8 7H23q-8 0-8-7z" fill="#e7bb83" stroke="#b78651" stroke-width="3"/><path d="M21 37h128M21 68h128" stroke="#ce9c63" stroke-width="2" opacity=".6"/><circle cx="25" cy="23" r="2" fill="#99734b"/><circle cx="145" cy="82" r="2" fill="#99734b"/><path d="M119 96q-5-11 1-18m-1 12q10-9 15-6" fill="none" stroke="#6c9657" stroke-width="4" stroke-linecap="round"/><path d="M117 92q-9-1-6 9l8 13 5-17q0-6-7-5" fill="#ed983f"/><path d="M40 142q9-16 17 0m49 0q9-20 19 0" fill="#b4cb89"/><text x="85" y="48" text-anchor="middle" fill="#624b34" font-size="20" font-family="Jua, sans-serif">밭 소식</text><text x="85" y="75" text-anchor="middle" fill="#6b794b" font-size="13" font-family="Jua, sans-serif">NOTICE · EVENT</text></svg></div>
- <div class="farm-board-content"><div class="farm-board-heading"><h2 id="boardTitle">당그니네 밭 소식</h2><span>밭에서 전하는 작은 소식 🌱</span></div><div id="farmAnnouncements"><div class="farm-news-row"><span class="news-tag">공지</span><p>🌱 아직 새로운 밭 소식이 없어요!
+<section class="farm-board" aria-label="공지 및 이벤트">
+ <div class="farm-owner-wood"><svg viewBox="0 0 150 176" role="img" aria-label="나무 팻말 속 밭 주인 게임 캐릭터"><defs><clipPath id="ownerSignPhoto"><rect x="18" y="18" width="114" height="114" rx="4"/></clipPath></defs><path d="M65 137h20v35H65z" fill="#b88755" stroke="#90643f" stroke-width="2"/><path d="M72 144v24M79 148v21" stroke="#d4a774" stroke-width="2"/><path d="M5 11Q5 5 12 5h126q7 0 7 7v124q0 7-7 7H12q-7 0-7-7z" fill="#e6bb83" stroke="#aa784c" stroke-width="3"/><path d="M10 12h130M11 47h5m118 0h6M11 80h5m118 0h6M11 114h5m118 0h6M11 136h129" fill="none" stroke="#c99760" stroke-width="2"/><rect x="16" y="16" width="118" height="118" rx="6" fill="#f8ebd4" stroke="#bd8b55" stroke-width="2"/><image href="farm-owner.png" x="18" y="18" width="114" height="114" preserveAspectRatio="xMidYMid meet" clip-path="url(#ownerSignPhoto)"/><g fill="#94704e"><circle cx="11" cy="12" r="2"/><circle cx="139" cy="12" r="2"/><circle cx="11" cy="136" r="2"/><circle cx="139" cy="136" r="2"/></g><path d="M49 172q7-13 14 0m22 0q7-12 14 0" stroke="#89aa65" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
+ <div class="farm-board-content"><div id="farmAnnouncements"><div class="farm-news-row"><span class="news-tag">공지</span><p>🌱 아직 새로운 밭 소식이 없어요!
 새로운 소식이 자라나면 이곳에서 알려드릴게요 🥕</p></div><div class="farm-news-row"><span class="news-tag event">이벤트</span><p>🥕 당그니네 밭 오픈 기념 이벤트!
 작물 2개 이상 구매하면 총 구매 금액에서 10% 할인해 드려요! 🌱</p></div></div></div>
 </section>
@@ -30,7 +30,7 @@
   <div class="selects filter-selects">
     <label class="filter-box"><span>카테고리</span><select id="categoryFilter"></select></label>
     <label class="filter-box"><span>판매 상태</span><select id="statusFilter"></select></label>
-    <label class="filter-box"><span>가격 정렬</span><select id="sortFilter" aria-label="가격 정렬"><option value="default">기본 정렬 (가나다순)</option><option value="low">가격 낮은 순</option><option value="high">가격 높은 순</option></select></label>
+    <label class="filter-box"><span>가격 정렬</span><select id="sortFilter" aria-label="가격 정렬"><option value="default">기본 정렬</option><option value="low">가격 낮은 순</option><option value="high">가격 높은 순</option></select></label>
   </div>
 </div>
 </section>
