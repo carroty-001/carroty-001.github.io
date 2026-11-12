@@ -28,3 +28,14 @@ body{font-family:'Jua','Noto Sans KR',sans-serif;background:linear-gradient(135d
 
 /* ページ番号は画面幅に合わせて一列 */
 .page-buttons{flex-wrap:nowrap;gap:4px;max-width:100%;width:auto}.page-buttons button{flex:0 0 36px;width:36px;min-width:0;padding:0;height:36px;font-size:13px;font-variant-numeric:tabular-nums}@media(max-width:600px){.page-buttons{gap:4px;max-width:100%}.page-buttons button{width:36px;min-width:0;padding:0}}
+
+/* 상품 상세 설명사진: 원본 비율을 유지하고 아래로 이어서 표시 */
+.modal-detail-section{grid-column:1/-1;min-width:0;width:100%;padding-top:22px;border-top:1px solid var(--line)}
+.modal-detail-section h3{margin:0 0 18px;text-align:center;color:var(--green);font-size:19px;font-weight:400}
+.modal-detail-section .modal-description{margin:0 0 20px;overflow-wrap:anywhere}
+.modal-detail-images{display:flex;flex-direction:column;gap:14px;min-width:0;width:100%}
+.detail-image{margin:0;width:100%;min-width:0}
+.detail-image img{display:block;width:100%;max-width:100%;height:auto;object-fit:contain;border-radius:8px}
+.detail-image img[hidden],.detail-image-error[hidden]{display:none}
+.detail-image-error{padding:22px 12px;text-align:center;background:#f2f1e9;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px}
+@media(max-width:640px){.modal-detail-section{padding-top:18px}.modal-detail-section h3{font-size:18px;margin-bottom:14px}.modal-detail-images{gap:10px}}
