@@ -5,11 +5,23 @@ function sheetProducts(table){
  for(const k of ['상품번호','상품명','카테고리','가격','판매상태','대표이미지'])if(!labels.includes(k))throw Error('상품 열을 확인해주세요');
  const ids=new Set(),get=(r,k)=>{const c=r.c[labels.indexOf(k)];return c?.v??''},parts=v=>String(v||'').split('|').map(s=>s.trim()).filter(Boolean);
  function num(v,empty){if(v===''||v==null)return empty;const n=Number(String(v).replace(/,/g,''));if(!Number.isFinite(n)||n<0)throw Error('숫자 입력 오류');return n}
- function image(v){let s=String(v??'').trim();if(!s)return '';if(/^https:\/\//i.test(s))return s;s=s.replace(/^images\//,'');if(/^\d+$/.test(s))s+='.png';if(!/^[\w.-]+\.(png|jpe?g|webp|gif)$/i.test(s))throw Error('사진 경로 오류');return s}
+ // 사진 형식이 틀려도 상품 전체 동기화를 중단하지 않습니다.
+ function image(v){
+  let s=String(v??'').trim();if(!s)return '';
+  if(/^https:\/\//i.test(s))return s;
+  s=s.replace(/^\.\//,'');
+  // 1051, 1051_1 등 확장자가 없는 파일명에도 PNG를 적용합니다.
+  if(/^[\w/-]+$/.test(s))s+='.png';
+  const valid=/^[\w./-]+\.(png|jpe?g|webp|gif)$/i.test(s)&&s.split('/').every(part=>part&&part!=='.'&&part!=='..');
+  if(!valid){console.warn('[당그니네 밭] 잘못된 사진 경로를 제외했습니다:',s);return '';}
+  // 폴더형 사이트에서는 기존 경로 도우미를 그대로 사용합니다.
+  try{return typeof itemImagePath==='function'?itemImagePath(s):s;}
+  catch(e){console.warn('[당그니네 밭] 사진 경로를 제외했습니다:',s);return '';}
+ }
  return table.rows.filter(r=>String(get(r,'상품명')).trim()).map(r=>{
  const id='X'+String(get(r,'상품번호')).trim();if(id==='X'||ids.has(id))throw Error('상품번호 누락 또는 중복');ids.add(id);
  const date=get(r,'등록일'),m=String(date).match(/^Date\((\d+),(\d+),(\d+)\)$/);
- return {id,name:String(get(r,'상품명')).trim(),category:String(get(r,'카테고리')).trim(),price:num(get(r,'가격'),null),discount:Math.min(100,num(get(r,'할인율(%)'),0)),status:parseStatuses(get(r,'판매상태'))[0],statuses:parseStatuses(get(r,'판매상태')),image:image(get(r,'대표이미지')),images:parts(get(r,'추가이미지')).map(image),tags:parts(get(r,'태그')),description:String(get(r,'상품설명')),date:m?`${m[1]}-${String(+m[2]+1).padStart(2,'0')}-${m[3].padStart(2,'0')}`:String(date),kakao:''};
+ return {id,name:String(get(r,'상품명')).trim(),category:String(get(r,'카테고리')).trim(),price:num(get(r,'가격'),null),discount:Math.min(100,num(get(r,'할인율(%)'),0)),status:parseStatuses(get(r,'판매상태'))[0],statuses:parseStatuses(get(r,'판매상태')),image:image(get(r,'대표이미지')),images:parts(get(r,'추가이미지')).map(v=>image(v)).filter(Boolean),tags:parts(get(r,'태그')),description:String(get(r,'상품설명')),date:m?`${m[1]}-${String(+m[2]+1).padStart(2,'0')}-${m[3].padStart(2,'0')}`:String(date),kakao:''};
  });
 }
 let sheetRequest=0;
