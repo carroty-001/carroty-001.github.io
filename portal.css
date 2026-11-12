@@ -1,20 +1,30 @@
-/* Outer shell only. The farm keeps its own independent CSS and JS. */
+/* Surrounding tabs only: farm.html and its styles/scripts are not modified. */
 :root{color-scheme:light}
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{display:grid;grid-template-columns:96px minmax(0,1fr);background:#f8f4e9;color:#755c43;font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif}
-.bookmarks{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-width:0;padding:25px 7px 24px;background:linear-gradient(180deg,#fdf6e6,#f4ecdc 62%,#f3ecdd);border-right:1px solid #e8d9c0}
-.portal-brand{display:block;width:100%;text-align:center;text-decoration:none;color:#7b583d;padding:3px 0 0}
-.portal-brand strong{font-family:'Jua','Malgun Gothic',sans-serif;font-size:20px;line-height:1.3;font-weight:400;white-space:nowrap;letter-spacing:-.8px}
-.bookmarks nav{display:flex;flex-direction:column;gap:11px;width:100%;margin-top:clamp(52px,17vh,145px)}
-.bookmark{position:relative;display:flex;align-items:center;justify-content:center;min-height:47px;padding:8px 2px;text-decoration:none;color:#94785b;background:#f7ecdb;border:1px solid #e2cdb0;border-radius:12px 5px 5px 12px;font:400 17px 'Jua','Malgun Gothic',sans-serif;box-shadow:0 2px 4px #76563b0b;transition:background .15s,color .15s,transform .15s}
-.bookmark:hover{background:#fff7e7;transform:translateX(2px)}
-.bookmark[aria-current="page"]{background:#fce6ae;color:#77532d;border-color:#d9bb81;box-shadow:inset 3px 0 #cda05c,0 2px 5px #795a3b10}
-.bookmark[data-shop="furniture"][aria-current="page"]{background:#e8efdf;color:#536b4b;border-color:#bdcdb1;box-shadow:inset 3px 0 #89a27a,0 2px 5px #795a3b10}
+body{display:grid;grid-template-columns:96px minmax(0,1fr);background:#faf6ed;color:#755c43;font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif}
+.bookmarks{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;min-width:0;padding:22px 7px 22px;background:linear-gradient(180deg,#fff9e9 0%,#f8efdc 50%,#f5ebdb 100%);border-right:1px solid #e6d4b9;box-shadow:inset -3px 0 0 #ffffff65}
+/* Soft hand-drawn dots and flower petals, made in CSS (no emoji). */
+.bookmarks::before{content:"";position:absolute;left:13px;right:13px;top:77px;height:23px;opacity:.75;background:radial-gradient(circle at 50% 50%,#e7b39b 0 3px,transparent 3.5px),radial-gradient(circle at 50% 10%,#f5d3b8 0 4px,transparent 4.5px),radial-gradient(circle at 50% 90%,#f5d3b8 0 4px,transparent 4.5px),radial-gradient(circle at 37% 50%,#f5d3b8 0 4px,transparent 4.5px),radial-gradient(circle at 63% 50%,#f5d3b8 0 4px,transparent 4.5px);background-repeat:no-repeat;pointer-events:none}
+.portal-brand{display:block;position:relative;width:100%;text-align:center;text-decoration:none;color:#865f48;padding:5px 0 8px}
+.portal-brand strong{font-family:'Jua','Malgun Gothic',sans-serif;font-size:20px;line-height:1.3;font-weight:400;white-space:nowrap;letter-spacing:-.8px;text-shadow:1px 2px 0 #fff9ee}
+.portal-brand::after{content:"";position:absolute;bottom:0;left:20%;right:20%;border-bottom:1px dashed #d8bfa2}
+.bookmarks nav{position:relative;display:flex;flex-direction:column;gap:15px;width:100%;margin:auto 0;padding-bottom:45px}
+.bookmarks nav::before{content:"";position:absolute;z-index:-1;left:50%;top:-22px;bottom:-18px;border-left:2px dotted #e5cfb2}
+.bookmark{position:relative;display:flex;align-items:center;justify-content:center;min-height:46px;padding:8px 2px;text-decoration:none;color:#8d7357;background:#fffaf0;border:1px solid #e2c8a7;border-radius:14px 8px 8px 14px;font:400 18px 'Jua','Malgun Gothic',sans-serif;box-shadow:0 3px 0 #e8d5bc,0 5px 10px #84664d0b;transition:background .15s,color .15s,transform .15s,box-shadow .15s}
+.bookmark::before{content:"";position:absolute;top:7px;bottom:7px;left:6px;border-left:2px dotted #ddc5a5;opacity:.8}
+.bookmark::after{content:"";position:absolute;right:8px;top:7px;width:5px;height:5px;border-radius:50%;background:#e6c7ad;box-shadow:0 0 0 2px #fffaf2}
+.bookmark:hover{background:#fff5de;transform:translateX(2px)}
+.bookmark[aria-current="page"]{background:#ffedc5;color:#79542f;border-color:#ddb985;box-shadow:0 3px 0 #d8b68b,0 5px 11px #84664d12}
+.bookmark[aria-current="page"]::before{border-color:#d8a773}
+.bookmark[data-shop="furniture"]{border-color:#c9d8bb}
+.bookmark[data-shop="furniture"]::before{border-color:#b4c6a3}
+.bookmark[data-shop="furniture"]::after{background:#b7c9a5}
+.bookmark[data-shop="furniture"][aria-current="page"]{background:#eaf3df;color:#536e4c;border-color:#aeca9e;box-shadow:0 3px 0 #b6caa6,0 5px 11px #84664d12}
 .shop-window{height:100vh;height:100dvh;min-width:0;overflow:hidden}
 iframe{display:block;width:100%;height:100%;border:0;background:#fffaf2}
 iframe[hidden]{display:none}
 .bookmark:focus-visible,.portal-brand:focus-visible{outline:2px solid #8ca56f;outline-offset:2px}
 .no-script{position:fixed;left:104px;bottom:12px;background:white;padding:12px;border:1px solid #e2d6bf;border-radius:9px}
-@media(max-width:900px){body{grid-template-columns:77px minmax(0,1fr)}.bookmarks{padding:20px 5px}.portal-brand strong{font-size:17px}.bookmarks nav{margin-top:clamp(43px,14vh,105px);gap:9px}.bookmark{min-height:43px;font-size:16px;border-radius:10px 4px 4px 10px}.no-script{left:83px}}
-@media(max-width:600px){body{grid-template-columns:55px minmax(0,1fr)}.bookmarks{padding:17px 3px}.portal-brand strong{font-size:12px;letter-spacing:-.8px}.bookmarks nav{margin-top:clamp(40px,12vh,80px);gap:8px}.bookmark{min-height:41px;font-size:14px;border-radius:9px 3px 3px 9px}.no-script{left:60px}}
+@media(max-width:900px){body{grid-template-columns:77px minmax(0,1fr)}.bookmarks{padding:20px 5px}.portal-brand strong{font-size:17px}.bookmarks::before{top:70px;left:8px;right:8px}.bookmarks nav{gap:13px;padding-bottom:38px}.bookmark{min-height:43px;font-size:16px}.no-script{left:83px}}
+@media(max-width:600px){body{grid-template-columns:55px minmax(0,1fr)}.bookmarks{padding:15px 3px}.portal-brand{padding-top:5px}.portal-brand strong{font-size:12px;letter-spacing:-.7px}.portal-brand::after{left:10%;right:10%}.bookmarks::before{top:56px;left:2px;right:2px;transform:scale(.7)}.bookmarks nav{gap:12px;padding-bottom:30px}.bookmark{min-height:40px;font-size:14px;border-radius:10px 5px 5px 10px}.bookmark::before{left:4px;top:6px;bottom:6px}.bookmark::after{right:4px;top:5px;width:3px;height:3px}.no-script{left:60px}}

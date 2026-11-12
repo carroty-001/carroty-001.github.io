@@ -75,17 +75,17 @@ const FurnitureData = (() => {
     const rows=basketProducts().filter(i=>F.has(i.id));if(!rows.length){$f('#copyHint').textContent='카트가 비어 있어요.';return}
     const names=rows.map(i=>i.name).join('\n');
     try{await navigator.clipboard.writeText(names)}catch(e){const area=document.createElement('textarea');area.value=names;document.body.appendChild(area);area.select();document.execCommand('copy');area.remove()}
-    $f('#copyHint').textContent=rows.length+'개 가구번호를 복사했어요.';
+    $f('#copyHint').textContent=rows.length+'개 가구 정보를 복사했어요.';
     setTimeout(()=>{const target=window.parent===window?window:window.parent;target.location.href=SETTINGS.kakaoUrl},350);
   }
   function renderDetailContent(p){const text=$f('#modalDescription');text.textContent=p.description||'';$f('#modalDetailSection').classList.toggle('hidden',!String(p.description||'').trim());}
 
   const escape = value => String(value ?? '').replace(/[&<>"']/g, x => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   let model, loading, config, timer;
-  const state = {tab:'furniture', seriesId:'', seriesQuery:'', query:'', owned:true, sort:'default', page:1, seriesPage:1};
+  const state = {tab:'furniture', seriesId:'', seriesQuery:'', owned:true, sort:'default', page:1, seriesPage:1};
   const amount = n => n == null ? '가격 문의' : Number(n).toLocaleString('ko-KR', {maximumFractionDigits:10});
   const position = i => i.id.split('_').pop().padStart(2,'0');
-  const displayName = i => `${model.seriesMap.get(i.seriesId).name} · 가구 ${position(i)} (${i.id})`;
+  const displayName = i => `${model.seriesMap.get(i.seriesId).name} · 가구 ${position(i)}`;
   const image = (url, label) => url ? `<img src="${escape(url)}" alt="${escape(label)}" loading="lazy" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="furniture-photo-fallback" hidden>🪑<small>사진 준비중</small></span>` : '<span class="furniture-photo-fallback">🪑<small>사진 준비중</small></span>';
   const pageButtons = (count, current) => {
     const start = Math.max(1, Math.min(current - 1, count - 3));
@@ -100,22 +100,19 @@ const FurnitureData = (() => {
       const pages = Math.max(1, Math.ceil(rows.length / 24)); state.seriesPage = Math.min(state.seriesPage, pages);
       root.innerHTML = `<div class="furniture-heading"><div><p class="furniture-eyebrow">우리 집을 채우는 작은 가구들</p><h2>가구 시리즈</h2></div><span>${rows.length}개 시리즈</span></div><div class="furniture-search"><span aria-hidden="true">🔎</span><input id="seriesSearch" type="search" aria-label="가구 시리즈 검색" placeholder="시리즈 이름으로 찾아보세요" value="${escape(state.seriesQuery)}"></div><div class="furniture-series-grid">${rows.slice((state.seriesPage-1)*24,state.seriesPage*24).map(s => {
         const items = model.bySeries.get(s.id), owned = items.filter(FurnitureData.available).length;
-        return `<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><span class="furniture-series-label">${escape(s.id)}</span><h3>${escape(s.name)}</h3><p>보유 ${owned}종 · 등록 ${items.length}종${s.totalCount != null?' / 도감 '+s.totalCount+'종':''}</p><span class="furniture-open">가구 둘러보기 <span aria-hidden="true">↗</span></span></div></button>`;
+        return `<button class="furniture-series-card" data-series="${escape(s.id)}"><div class="furniture-series-photo">${image(s.image,s.name)}</div><div class="furniture-series-info"><span class="furniture-series-label">DANGNINE MART</span><h3>${escape(s.name)}</h3><p>보유 ${owned}종 · 등록 ${items.length}종${s.totalCount != null?' / 도감 '+s.totalCount+'종':''}</p><span class="furniture-open">가구 둘러보기 <span aria-hidden="true">↗</span></span></div></button>`;
       }).join('')}</div>${!rows.length?'<p class="furniture-empty">찾는 시리즈가 없어요.</p>':''}${pageButtons(pages,state.seriesPage)}`;
-      root.querySelectorAll('[data-series]').forEach(b => b.onclick = () => {state.seriesId=b.dataset.series;state.page=1;state.query='';render();});
+      root.querySelectorAll('[data-series]').forEach(b => b.onclick = () => {state.seriesId=b.dataset.series;state.page=1;render();});
       bindSearch('#seriesSearch','seriesQuery');
     } else {
       const s = model.seriesMap.get(state.seriesId);
       if (!s) {state.seriesId='';render();return;}
       const all = model.bySeries.get(s.id), owned = all.filter(FurnitureData.available).length;
       const rows = FurnitureData.select(model,s.id,state), pages = Math.max(1,Math.ceil(rows.length/30)); state.page=Math.min(state.page,pages);
-      root.innerHTML = `<button class="furniture-back" id="seriesBack">‹ 모든 시리즈</button><div class="furniture-series-banner"><div class="furniture-banner-photo">${image(s.image,s.name)}</div><div><span class="furniture-eyebrow">${escape(s.id)} COLLECTION</span><h2>${escape(s.name)}</h2><p>보유 ${owned}종 · 등록 ${all.length}종${s.totalCount != null?' / 도감 '+s.totalCount+'종':''}</p>${s.description?'<p>'+escape(s.description)+'</p>':''}</div></div><div class="furniture-controls"><div class="furniture-stock-tabs" role="group" aria-label="보유 필터"><button data-owned="yes" aria-pressed="${state.owned}">보유 가구</button><button data-owned="no" aria-pressed="${!state.owned}">전체 가구</button></div><div class="furniture-selects"><label>정렬<select id="furnitureSort"><option value="default">기본 정렬</option><option value="low" ${state.sort==='low'?'selected':''}>가격 낮은 순</option><option value="high" ${state.sort==='high'?'selected':''}>가격 높은 순</option></select></label></div></div><div class="furniture-search"><span aria-hidden="true">🔎</span><input id="furnitureItemSearch" type="search" aria-label="가구번호 검색" placeholder="가구번호로 찾아보세요" value="${escape(state.query)}"></div><p class="furniture-result">${rows.length}개의 가구</p><div class="furniture-items-grid">${rows.slice((state.page-1)*30,state.page*30).map(i => `<article class="furniture-item"><button class="furniture-item-picture" data-detail="${escape(i.id)}" aria-label="${escape(displayName(i))} 상세보기">${image(i.image,displayName(i))}</button><div class="furniture-item-info"><span class="furniture-item-code">${escape(i.id)}</span><div class="furniture-item-price">${amount(FurnitureData.price(model,i))}</div><p class="furniture-stock ${FurnitureData.available(i)?'':'unavailable'}">${i.stock===0?'품절':(i.status==='selling'?'보유 '+i.stock+'개':'미판매 · 보유 '+i.stock+'개')}</p><button class="furniture-add ${F.has(i.id)?'selected':''}" data-basket="${escape(i.id)}" aria-pressed="${F.has(i.id)}" ${!FurnitureData.available(i)&&!F.has(i.id)?'disabled':''}>🛒 ${F.has(i.id)?'카트에서 빼기':'카트에 담기'}</button></div></article>`).join('')}</div>${!rows.length?'<p class="furniture-empty">조건에 맞는 가구가 없어요. 전체 가구를 선택해보세요.</p>':''}${pageButtons(pages,state.page)}`;
+      root.innerHTML = `<button class="furniture-back" id="seriesBack">‹ 모든 시리즈</button><div class="furniture-series-banner"><div class="furniture-banner-photo">${image(s.image,s.name)}</div><div><span class="furniture-eyebrow">DANGNINE COLLECTION</span><h2>${escape(s.name)}</h2><p>보유 ${owned}종 · 등록 ${all.length}종${s.totalCount != null?' / 도감 '+s.totalCount+'종':''}</p>${s.description?'<p>'+escape(s.description)+'</p>':''}</div></div><p class="furniture-result">${rows.length}개의 가구</p><div class="furniture-items-grid">${rows.slice((state.page-1)*30,state.page*30).map(i => `<article class="furniture-item"><button class="furniture-item-picture" data-detail="${escape(i.id)}" aria-label="${escape(displayName(i))} 상세보기">${image(i.image,displayName(i))}</button><div class="furniture-item-info"><div class="furniture-item-price">${amount(FurnitureData.price(model,i))}</div><p class="furniture-stock ${FurnitureData.available(i)?'':'unavailable'}">${i.stock===0?'품절':(i.status==='selling'?'보유 '+i.stock+'개':'미판매 · 보유 '+i.stock+'개')}</p><button class="furniture-add ${F.has(i.id)?'selected':''}" data-basket="${escape(i.id)}" aria-pressed="${F.has(i.id)}" ${!FurnitureData.available(i)&&!F.has(i.id)?'disabled':''}>🛒 ${F.has(i.id)?'카트에서 빼기':'카트에 담기'}</button></div></article>`).join('')}</div>${!rows.length?'<p class="furniture-empty">현재 판매 중인 가구가 없어요.</p>':''}${pageButtons(pages,state.page)}`;
       $f('#seriesBack').onclick=()=>{state.seriesId='';render();};
-      root.querySelectorAll('[data-owned]').forEach(b=>b.onclick=()=>{state.owned=b.dataset.owned==='yes';state.page=1;render();});
-      $f('#furnitureSort').onchange=e=>{state.sort=e.target.value;state.page=1;render();};
       root.querySelectorAll('[data-detail]').forEach(b=>b.onclick=()=>openItem(b.dataset.detail));
       root.querySelectorAll('[data-basket]').forEach(b=>b.onclick=()=>toggle(b.dataset.basket));
-      bindSearch('#furnitureItemSearch','query');
     }
     root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(state.seriesId)state.page=+b.dataset.page;else state.seriesPage=+b.dataset.page;render();$f('#furnitureShop').scrollIntoView({behavior:'smooth',block:'start'});});
   }
