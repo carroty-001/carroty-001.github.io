@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "series": [
+    {
+      "id": "F001",
+      "name": "깊은 빨간 맨션",
+      "image": "furniture/assets/F001.png",
+      "totalCount": 25,
+      "description": ""
+    }
+  ],
+  "gradePrices": {
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null
+  },
+  "items": [
+    {
+      "id": "F001_01",
+      "seriesId": "F001",
+      "image": "furniture/assets/F001_01.png",
+      "grade": 5,
+      "price": null,
+      "stock": 1,
+      "status": "selling",
+      "description": ""
+    }
+  ]
+}
