@@ -72,3 +72,40 @@ body,button,input,select,textarea{font-family:'Gowun Dodum','Noto Sans KR',sans-
   .furniture-page-header {padding:9px 10px;}
   .furniture-page-title .furniture-page-kicker {font-size:7px;letter-spacing:0;}
 }
+
+/* Mart-only work-in-progress notice: placed directly beneath the silver header. */
+.mart-work-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 13px 20px;
+  border: 1px solid #cbd1d7;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #f7f8f9, #e9edf1 54%, #f8f9fa);
+  color: #4d5863;
+  box-shadow: 0 2px 7px rgba(77, 88, 99, .05);
+  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  text-align: center;
+}
+.mart-work-notice-label {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #d6dce2;
+  color: #45515c;
+  font-size: 12px;
+  font-weight: 700;
+}
+.mart-work-notice p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.mart-work-notice strong { font-weight: 700; margin-right: 7px; }
+@media(max-width: 700px) {
+  .mart-work-notice { gap: 8px; padding: 11px 12px; }
+  .mart-work-notice p { font-size: 12px; }
+  .mart-work-notice p span { display: block; }
+}
