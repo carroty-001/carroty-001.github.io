@@ -1,39 +1,135 @@
-/* Connected mini-bookmark navigation. Each shop stays in its own iframe. */
-:root{color-scheme:light}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{display:grid;grid-template-columns:96px minmax(0,1fr);background:#fffaf2;color:#765c4b;font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif}
-.bookmarks{position:relative;z-index:2;display:flex;flex-direction:column;align-items:stretch;min-width:0;padding:18px 0 12px 7px;background:#fdf7ed;border-right:1px solid #e8dfd2}
-.portal-brand{display:block;text-align:center;text-decoration:none;color:#865e4c;padding:0 7px 13px 0}
-.portal-brand strong{font:400 23px/1.15 'Gamja Flower','Jua','Malgun Gothic',sans-serif;letter-spacing:-.8px;white-space:nowrap}
-.bookmarks nav{display:flex;flex-direction:column;gap:7px;width:100%;margin-top:2px;align-items:stretch}
-/* Tabs end exactly at the shop edge instead of floating as separate cards. */
-.bookmark{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:81px;margin-right:-1px;padding:7px 3px 6px;text-decoration:none;background:#fff0df;border:1px solid #e8c9b6;border-right:0;border-radius:9px 0 0 9px;color:#8d6254;font:400 18px/1.1 'Jua','Malgun Gothic',sans-serif;transition:background .15s,color .15s}
-.bookmark[data-shop="furniture"]{background:#f7e7eb;border-color:#e9cbd3;color:#8b6574}
-.bookmark:hover{background:#fff5e9}
-.bookmark[data-shop="furniture"]:hover{background:#fff0f3}
-/* The selected bookmark opens into the active page: no right edge or gap. */
-.bookmark[aria-current="page"]{z-index:3;background:#fffaf2;border-color:#ddc8b5;color:#77533f;box-shadow:-2px 2px 5px #68462e0b}
-.bookmark[data-shop="furniture"][aria-current="page"]{background:#fffaf2;border-color:#d9b9c4;color:#8b5e6e}
-.bookmark[aria-current="page"]::after{content:"";position:absolute;top:0;bottom:0;right:-3px;width:4px;background:#fffaf2;pointer-events:none}
-.tab-art{display:block;width:43px;height:43px;flex:none}
-.shop-window{position:relative;z-index:1;height:100vh;height:100dvh;min-width:0;overflow:hidden;background:#fffaf2}
-iframe{display:block;width:100%;height:100%;border:0;background:#fffaf2}
-iframe[hidden]{display:none}
-.bookmark:focus-visible,.portal-brand:focus-visible{outline:2px solid #8ca56f;outline-offset:-3px}
-.no-script{position:fixed;left:100px;bottom:12px;background:white;padding:12px;border:1px solid #e2d6bf;border-radius:9px}
-@media(max-width:900px){body{grid-template-columns:78px minmax(0,1fr)}.bookmarks{padding:16px 0 10px 5px}.portal-brand{padding-right:5px}.portal-brand strong{font-size:20px}.bookmark{min-height:72px;font-size:16px}.tab-art{width:38px;height:38px}.bookmarks nav{gap:6px}}
-@media(max-width:600px){body{grid-template-columns:59px minmax(0,1fr)}.bookmarks{padding:13px 0 8px 3px}.portal-brand{padding:0 3px 9px 0}.portal-brand strong{font-size:15px;letter-spacing:-.9px}.bookmarks nav{gap:5px;margin-top:2px}.bookmark{min-height:63px;gap:2px;padding:5px 0 4px;font-size:13px;border-radius:6px 0 0 6px}.tab-art{width:32px;height:32px}.no-script{left:64px}}
-
-/* Illustrated bookmark tabs: only drawings are visible; names stay accessible. */
-.bookmark{min-height:68px;gap:0;padding:8px 2px;line-height:1}
-.tab-art{width:47px;height:47px}
-@media(max-width:900px){.bookmark{min-height:64px;padding:7px 1px}.tab-art{width:43px;height:43px}}
-@media(max-width:600px){.bookmark{min-height:58px;padding:6px 0}.tab-art{width:37px;height:37px}}
-
-/* Outer frame: gentle peach, without touching farm page internals. */
-body {background:#fff0e3;}
-.bookmarks {background:#fff0e3;border-right-color:#e9c9b4;}
-.shop-window,iframe {background:#fff0e3;}
-.bookmark[aria-current="page"],.bookmark[data-shop="furniture"][aria-current="page"] {background:#fff0e3;}
-.bookmark[aria-current="page"]::after {background:#fff0e3;}
+/* 당그니네 | 상단 왼쪽 가로형 그림 책갈피
+   밭/마트 페이지의 내부 스타일과 기능에는 영향 없음. */
+:root {color-scheme:light}
+* {box-sizing:border-box}
+html,body {width:100%;height:100%;margin:0;overflow:hidden}
+body {
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  background:#fff0e3;
+  color:#765c4b;
+  font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;
+}
+.bookmarks {
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex:none;
+  align-items:center;
+  justify-content:flex-start;
+  gap:14px;
+  height:83px;
+  padding:0 19px 0 24px;
+  background:#fff0e3;
+  border-bottom:1px solid #e9c9b4;
+}
+.portal-brand {
+  display:inline-flex;
+  align-items:center;
+  flex:none;
+  text-decoration:none;
+  color:#865e4c;
+  padding:0;
+  margin:0;
+}
+.portal-brand strong {
+  font:400 29px/1.15 'Gamja Flower','Jua','Malgun Gothic',sans-serif;
+  letter-spacing:-.8px;
+  white-space:nowrap;
+}
+.bookmarks nav {
+  display:flex;
+  flex-direction:row;
+  align-self:stretch;
+  align-items:flex-end;
+  gap:9px;
+  margin:0;
+  padding:0;
+}
+.bookmark {
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  width:79px;
+  height:68px;
+  padding:8px 5px 6px;
+  margin:0 0 -1px;
+  text-decoration:none;
+  color:#8d6254;
+  background:#fff0df;
+  border:1px solid #e8c9b6;
+  border-radius:11px 11px 0 0;
+  transition:background .15s ease,transform .15s ease;
+}
+.bookmark[data-shop="furniture"] {
+  background:#f7e7eb;
+  border-color:#e9cbd3;
+  color:#8b6574;
+}
+.bookmark:hover {background:#fff5e9}
+.bookmark[data-shop="furniture"]:hover {background:#fff0f3}
+.bookmark[aria-current="page"] {
+  z-index:3;
+  background:#fff0e3;
+  border-color:#ddc8b5;
+  border-bottom-color:#fff0e3;
+  box-shadow:0 -2px 5px #68462e09;
+}
+.bookmark[data-shop="furniture"][aria-current="page"] {
+  background:#fff0e3;
+  border-color:#d9b9c4;
+  border-bottom-color:#fff0e3;
+}
+.bookmark[aria-current="page"]::after {
+  content:"";
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  right:0;
+  height:3px;
+  background:#fff0e3;
+  pointer-events:none;
+}
+.tab-art {display:block;width:47px;height:47px;flex:none}
+.shop-window {
+  position:relative;
+  z-index:1;
+  flex:1 1 auto;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  background:#fff0e3;
+}
+iframe {display:block;width:100%;height:100%;border:0;background:#fff0e3}
+iframe[hidden] {display:none}
+.bookmark:focus-visible,.portal-brand:focus-visible {
+  outline:2px solid #8ca56f;
+  outline-offset:-3px;
+}
+.no-script {
+  position:fixed;
+  left:15px;
+  bottom:12px;
+  background:white;
+  padding:12px;
+  border:1px solid #e2d6bf;
+  border-radius:9px;
+}
+@media(max-width:700px) {
+  .bookmarks {height:69px;gap:9px;padding:0 11px 0 14px}
+  .portal-brand strong {font-size:24px;letter-spacing:-.6px}
+  .bookmarks nav {gap:6px}
+  .bookmark {width:62px;height:57px;padding:5px 4px 4px;border-radius:9px 9px 0 0}
+  .tab-art {width:39px;height:39px}
+}
+@media(max-width:390px) {
+  .bookmarks {height:62px;gap:7px;padding-left:9px;padding-right:7px}
+  .portal-brand strong {font-size:21px}
+  .bookmarks nav {gap:5px}
+  .bookmark {width:51px;height:52px;padding:5px 3px 4px}
+  .tab-art {width:34px;height:34px}
+}
