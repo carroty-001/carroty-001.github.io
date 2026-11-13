@@ -198,36 +198,55 @@ async function startWishCounts(){
 (function addWishStyles(){
  const style=document.createElement("style");
  style.textContent=`
- /* 기존 원형 바구니를 유지하고, 찜 숫자는 원 안의 작은 원형 배지로 표시 */
+ /* 서로 겹치지 않는 원 2개: 위 작은 숫자 원, 아래 기존 크기의 바구니 원 */
  .product-card button.heart.wish-basket-stack{
   position:absolute;display:block;box-sizing:border-box;
-  width:36px;height:36px;min-width:36px;min-height:36px;
-  padding:0;margin:0;border-radius:50%;
-  overflow:hidden;line-height:1;
+  width:36px;height:60px;min-width:36px;min-height:60px;
+  padding:0;margin:0;border:0;border-radius:0;
+  background:transparent;box-shadow:none;
+  overflow:visible;line-height:1;
+  isolation:isolate;
  }
+ /* 바구니 흰색 원: 32x32 정원, 기존 중심 위치 유지 */
+ .product-card button.heart.wish-basket-stack::before{
+  content:"";position:absolute;z-index:0;
+  left:2px;bottom:2px;width:32px;height:32px;
+  box-sizing:border-box;border-radius:50%;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 2px 8px rgba(66,58,44,.14);
+  pointer-events:none;
+ }
+ .product-card button.heart.wish-basket-stack.faved::before{
+  background:#fff3e4;
+ }
+ /* 찜 숫자 전용 작은 원: 바구니 원과 5px 떨어져 있음 */
  .product-card button.heart.wish-basket-stack .wish-inline-count{
-  position:absolute;z-index:2;top:1px;left:50%;
+  position:absolute;z-index:2;top:0;left:50%;
   transform:translateX(-50%);
   display:flex;align-items:center;justify-content:center;
-  box-sizing:border-box;width:15px;height:15px;min-width:15px;min-height:15px;
-  margin:0;padding:0;border:0;border-radius:50%;
-  background:#fff4dc;color:#6d7d55;
-  font:700 9px/1 'Noto Sans KR',sans-serif;
-  font-variant-numeric:tabular-nums;white-space:nowrap;
+  box-sizing:border-box;width:19px;height:19px;
+  min-width:19px;min-height:19px;
+  margin:0;padding:0 2px;border:0;border-radius:50%;
+  background:#fff;color:#745f51;
+  box-shadow:0 1px 5px rgba(66,58,44,.13);
+  font:700 10px/1 'Noto Sans KR',sans-serif;
+  font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap;
   pointer-events:none;
  }
  .product-card button.heart.wish-basket-stack .wish-inline-count.wish-many{
-  width:19px;font-size:7px;
+  font-size:8px;
  }
  .product-card button.heart.wish-basket-stack .basket-emoji{
-  position:absolute;left:50%;bottom:1px;
+  position:absolute;z-index:1;left:50%;bottom:6px;
   transform:translateX(-50%);
-  display:block;font-size:20px;line-height:1;
+  display:block;font-size:19px;line-height:24px;
+  background:transparent;border:0;box-shadow:none;
   pointer-events:none;
  }
  `;
  document.head.appendChild(style);
 })();
+
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
