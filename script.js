@@ -169,23 +169,36 @@ async function startWishCounts(){
 (function addWishStyles(){
  const style=document.createElement("style");
  style.textContent=`
- .product-card .wish-inline-count{
-  position:absolute;z-index:2;top:15px;right:45px;
-  display:inline-flex;align-items:center;justify-content:center;
-  min-width:16px;min-height:20px;padding:1px 4px;
-  color:#647e55;background:rgba(255,255,255,.93);
-  border-radius:7px;font:600 11px/1.4 'Noto Sans KR',sans-serif;
-  font-variant-numeric:tabular-nums;white-space:nowrap;
+ .product-card button.heart.wish-basket-stack{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;min-width:42px;width:42px;height:51px;min-height:51px;
+  padding:3px 2px 4px;line-height:1;
+ }
+ .product-card button.heart.wish-basket-stack .wish-inline-count{
+  position:static;display:block;flex:none;min-width:0;min-height:0;
+  margin:0 0 2px;padding:0;border:0;background:none;box-shadow:none;
+  color:#745f51;font:700 11px/1.05 'Noto Sans KR',sans-serif;
+  font-variant-numeric:tabular-nums;text-align:center;
+  white-space:nowrap;pointer-events:none;
+ }
+ .product-card button.heart.wish-basket-stack .basket-emoji{
+  display:block;flex:none;font-size:21px;line-height:1.1;
   pointer-events:none;
  }
- @media(max-width:600px){.product-card .wish-inline-count{top:14px;right:44px;font-size:10px;padding:1px 3px}}
+ @media(max-width:600px){
+  .product-card button.heart.wish-basket-stack{
+   min-width:39px;width:39px;height:48px;min-height:48px;padding:3px 2px;
+  }
+  .product-card button.heart.wish-basket-stack .wish-inline-count{font-size:10px;}
+  .product-card button.heart.wish-basket-stack .basket-emoji{font-size:20px;}
+ }
  `;
  document.head.appendChild(style);
 })();
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}${wishCountHtml(p.id)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">🧺</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]"))openDetail(c.dataset.id)});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
