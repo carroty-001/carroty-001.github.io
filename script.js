@@ -116,31 +116,24 @@ function wishJsonp(params){
 function wishCountHtml(id){
  if(!wishlistReady)return "";
  const count=Math.max(0,Number(wishCounts[id])||0);
- return `<span class="wish-count" aria-label="현재 ${count}명이 찜했어요">♡ <b>${count.toLocaleString("ko-KR")}</b>명 찜</span>`;
+ return `<span class="wish-inline-count" data-wish-id="${esc(id)}" aria-label="현재 ${count}명이 담았어요">${count.toLocaleString("ko-KR")}</span>`;
 }
 function updateWishCount(id,count){
  if(!wishlistReady)return;
  wishCounts[id]=Math.max(0,Number(count)||0);
- document.querySelectorAll(".wish-count[data-wish-id]").forEach(el=>{
+ document.querySelectorAll(".wish-inline-count[data-wish-id]").forEach(el=>{
   if(el.dataset.wishId!==String(id))return;
-  const n=wishCounts[id];el.innerHTML=`♡ <b>${n.toLocaleString("ko-KR")}</b>명 찜`;
-  el.setAttribute("aria-label",`현재 ${n}명이 찜했어요`);
+  const n=wishCounts[id];el.textContent=n.toLocaleString("ko-KR");
+  el.setAttribute("aria-label",`현재 ${n}명이 담았어요`);
  });
- const modal=document.querySelector("#modalWishCount");
- if(modal&&!document.querySelector("#productModal").classList.contains("hidden")&&document.querySelector("#modalId").textContent===String(id)){
-  modal.innerHTML=wishCountHtml(id);
- }
+
 }
 function updateAllWishCounts(counts){
  for(const id of Object.keys(wishCounts))delete wishCounts[id];
  for(const [id,n] of Object.entries(counts||{}))wishCounts[id]=Math.max(0,Number(n)||0);
  wishlistReady=true;
  render();
- if(!document.querySelector("#productModal").classList.contains("hidden")){
-  const id=document.querySelector("#modalId").textContent;
-  const modal=document.querySelector("#modalWishCount");
-  if(modal)modal.innerHTML=wishCountHtml(id);
- }
+
 }
 function syncWishChange(id,selected){
  if(!wishlistEndpoint)return;
@@ -175,21 +168,24 @@ async function startWishCounts(){
 }
 (function addWishStyles(){
  const style=document.createElement("style");
- style.textContent=`.wish-count{display:inline-flex;align-items:center;gap:3px;font-size:11px;line-height:1.4;color:#a86c79;background:#fff5f6;border:1px solid #f2e0e2;border-radius:999px;padding:3px 8px;white-space:nowrap}
- .wish-count b{font-weight:700;color:#9c5364}
- #modalWishCount{margin:7px 0 3px}
- @media(max-width:600px){.wish-count{font-size:10px;padding:2px 7px}}`;
- document.head.appendChild(style);
- const heading=document.querySelector("#modalName");
- if(heading&&!document.querySelector("#modalWishCount")){
-  const holder=document.createElement("div");holder.id="modalWishCount";
-  heading.insertAdjacentElement("afterend",holder);
+ style.textContent=`
+ .product-card .wish-inline-count{
+  position:absolute;z-index:2;top:15px;right:45px;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:16px;min-height:20px;padding:1px 4px;
+  color:#647e55;background:rgba(255,255,255,.93);
+  border-radius:7px;font:600 11px/1.4 'Noto Sans KR',sans-serif;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  pointer-events:none;
  }
+ @media(max-width:600px){.product-card .wish-inline-count{top:14px;right:44px;font-size:10px;padding:1px 3px}}
+ `;
+ document.head.appendChild(style);
 })();
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">🧺</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${wishlistReady?`<div data-wish-id="${esc(p.id)}" class="wish-count" aria-label="현재 ${Math.max(0,Number(wishCounts[p.id])||0)}명이 찜했어요">♡ <b>${(Math.max(0,Number(wishCounts[p.id])||0)).toLocaleString("ko-KR")}</b>명 찜</div>`:""}${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}${wishCountHtml(p.id)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">🧺</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]"))openDetail(c.dataset.id)});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
@@ -197,7 +193,7 @@ $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이�
 const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(0,document.querySelector(".shop-toolbar").offsetTop-24),behavior:"smooth"})};
 document.querySelectorAll("#pagination [data-p]").forEach(b=>b.onclick=()=>go(+b.dataset.p));$("#pageJump").onsubmit=ev=>{ev.preventDefault();const n=Number($("#pageNumber").value);if(Number.isInteger(n)&&n>=1&&n<=pages)go(n)};}
 
-function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";const modalWish=$("#modalWishCount");if(modalWish)modalWish.innerHTML=wishCountHtml(p.id);$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
+function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
 function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
 async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),h=$("#copyHint");if(!names.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}let t=names.join("\n");try{await navigator.clipboard.writeText(t)}catch(e){let x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}h.textContent=`${names.length}개 작물명이 복사됐어요!`;setTimeout(()=>location.href=SETTINGS.kakaoUrl,350)}
 $("#sortFilter").onchange=()=>{page=1;render()};
