@@ -61,6 +61,29 @@ function nearSearch(q,field){
  }
  return false;
 }
+// 등록일이 비어 있으면 오래된 상품으로 취급합니다.
+function registeredTime(p){
+ const raw=p.date??p.registeredAt??p.registered_at;
+ if(raw==null||String(raw).trim()==="")return 0;
+ const normalized=String(raw).trim().replace(/\.\s*/g,"-").replace(/-$/," ").trim();
+ const time=Date.parse(normalized);
+ return Number.isFinite(time)?time:0;
+}
+// 기존 HTML을 건드리지 않고 정렬 옵션을 추가합니다.
+function setupSortOptions(){
+ const select=$("#sortFilter");if(!select)return;
+ const label=select.closest("label");
+ const title=label?.querySelector("span");if(title)title.textContent="정렬 기준";
+ select.setAttribute("aria-label","정렬 기준");
+ const base=select.querySelector('option[value="default"]');
+ if(base)base.textContent="기본 정렬 (가나다순)";
+ if(!select.querySelector('option[value="newest"]')){
+  const option=document.createElement("option");
+  option.value="newest";option.textContent="등록일자 최근순";
+  if(base)base.after(option);else select.prepend(option);
+ }
+}
+setupSortOptions();
 function filtered(){
  const q=searchKey($("#searchInput").value);
  const candidates=P.filter(p=>(cat==="전체"||p.category===cat)
@@ -70,14 +93,19 @@ function filtered(){
  if(q&&result.length===0&&q.length>=4)
   result=candidates.filter(p=>fields(p).some(x=>nearSearch(q,x)));
  const order=$("#sortFilter").value;
- return order==="default"
-  ?result.sort((a,b)=>a.name.localeCompare(b.name,"ko",{numeric:true}))
-  :result.sort((a,b)=>{
-   if(a.price==null&&b.price==null)return 0;
-   if(a.price==null)return 1;
-   if(b.price==null)return -1;
-   return order==="low"?sale(a)-sale(b):sale(b)-sale(a);
-  });
+ const byName=(a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ko",{numeric:true});
+ if(order==="default")return result.sort((a,b)=>byName(a,b)||registeredTime(b)-registeredTime(a));
+ if(order==="newest")return result.sort((a,b)=>{
+  const aTime=registeredTime(a),bTime=registeredTime(b);
+  return (bTime-aTime)||byName(a,b);
+ });
+ return result.sort((a,b)=>{
+  if(a.price==null&&b.price==null)return byName(a,b);
+  if(a.price==null)return 1;
+  if(b.price==null)return -1;
+  const difference=order==="low"?sale(a)-sale(b):sale(b)-sale(a);
+  return difference||byName(a,b);
+ });
 }
 
 // === 공용 찜 수: Google Apps Script + 익명 브라우저 식별자 ===
