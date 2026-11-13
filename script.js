@@ -33,10 +33,163 @@ function price(p){if(p.price===null||p.price===undefined||p.price==="")return `<
 function isNew(p){let raw=p.date||p.registeredAt||p.registered_at;if(!raw)return false;let d=new Date(String(raw).replace(/\./g,"-")+"T00:00:00");if(isNaN(d))return false;let n=new Date();n.setHours(0,0,0,0);let diff=Math.floor((n-d)/86400000);return diff>=0&&diff<3}
 function badges(p){return `<div class="badge-stack">${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
-function filtered(){let q=$("#searchInput").value.trim().toLowerCase();let result=P.filter(p=>(!q||(p.name+" "+(p.tags||[]).join(" ")).toLowerCase().includes(q))&&(cat==="전체"||p.category===cat)&&(st==="all"||productStatuses(p).includes(st)));let order=$("#sortFilter").value;return order==="default"?result.sort((a,b)=>a.name.localeCompare(b.name,"ko",{numeric:true})):result.sort((a,b)=>{if(a.price==null&&b.price==null)return 0;if(a.price==null)return 1;if(b.price==null)return -1;return order==="low"?sale(a)-sale(b):sale(b)-sale(a)})}
+// 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
+function searchKey(value){
+ return String(value??"").normalize("NFKC").toLocaleLowerCase("ko-KR")
+  .replace(/[\\s\\p{P}\\p{S}]+/gu,"");
+}
+// 검색 결과가 전혀 없을 때만 한 글자 오타도 허용합니다 (4글자 이상).
+function oneEditAway(a,b){
+ if(Math.abs(a.length-b.length)>1)return false;
+ let i=0,j=0,errors=0;
+ while(i<a.length&&j<b.length){
+  if(a[i]===b[j]){i++;j++;continue}
+  if(++errors>1)return false;
+  if(a.length>b.length)i++;
+  else if(a.length<b.length)j++;
+  else{i++;j++}
+ }
+ return errors+(a.length-i)+(b.length-j)<=1;
+}
+function nearSearch(q,field){
+ if(q.length<4)return false;
+ const value=searchKey(field);
+ for(let size=q.length-1;size<=q.length+1;size++){
+  if(size<1||size>value.length)continue;
+  for(let start=0;start+size<=value.length;start++)
+   if(oneEditAway(q,value.slice(start,start+size)))return true;
+ }
+ return false;
+}
+function filtered(){
+ const q=searchKey($("#searchInput").value);
+ const candidates=P.filter(p=>(cat==="전체"||p.category===cat)
+  &&(st==="all"||productStatuses(p).includes(st)));
+ const fields=p=>[p.name,...(Array.isArray(p.tags)?p.tags:[])];
+ let result=!q?candidates:candidates.filter(p=>fields(p).some(x=>searchKey(x).includes(q)));
+ if(q&&result.length===0&&q.length>=4)
+  result=candidates.filter(p=>fields(p).some(x=>nearSearch(q,x)));
+ const order=$("#sortFilter").value;
+ return order==="default"
+  ?result.sort((a,b)=>a.name.localeCompare(b.name,"ko",{numeric:true}))
+  :result.sort((a,b)=>{
+   if(a.price==null&&b.price==null)return 0;
+   if(a.price==null)return 1;
+   if(b.price==null)return -1;
+   return order==="low"?sale(a)-sale(b):sale(b)-sale(a);
+  });
+}
+
+// === 공용 찜 수: Google Apps Script + 익명 브라우저 식별자 ===
+// 개인 이름, 연락처, IP를 수집하지 않습니다. 브라우저별로 하나의 식별자만 사용합니다.
+const wishCounts=Object.create(null);
+let wishlistEndpoint="",wishlistReady=false,wishlistRequestSeq=0;
+const wishlistQueues=new Map();
+let wishlistInitialSync=Promise.resolve();
+const wishlistClientKey="dangniWishlistClientId";
+function wishClientId(){
+ let id=localStorage.getItem(wishlistClientKey);
+ if(!/^[a-f0-9]{32}$/.test(id||"")){
+  const bytes=new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  id=Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+  localStorage.setItem(wishlistClientKey,id);
+ }
+ return id;
+}
+function wishJsonp(params){
+ return new Promise((resolve,reject)=>{
+  if(!wishlistEndpoint){reject(Error("찜 집계 주소 미설정"));return}
+  const callback="dangniWishCb_"+(++wishlistRequestSeq),script=document.createElement("script");
+  let timer;
+  const done=()=>{clearTimeout(timer);script.remove();delete window[callback]};
+  window[callback]=payload=>{done();payload&&payload.ok?resolve(payload):reject(Error(payload?.error||"찜 집계 오류"))};
+  script.onerror=()=>{done();reject(Error("찜 집계 연결 실패"))};
+  timer=setTimeout(()=>{done();reject(Error("찜 집계 응답 지연"))},20000);
+  const url=new URL(wishlistEndpoint);
+  for(const [k,v] of Object.entries(params))url.searchParams.set(k,String(v));
+  url.searchParams.set("callback",callback);
+  url.searchParams.set("nonce",Date.now()+"_"+wishlistRequestSeq);
+  script.src=url.toString();document.head.appendChild(script);
+ });
+}
+function wishCountHtml(id){
+ if(!wishlistReady)return "";
+ const count=Math.max(0,Number(wishCounts[id])||0);
+ return `<span class="wish-count" aria-label="현재 ${count}명이 찜했어요">♡ <b>${count.toLocaleString("ko-KR")}</b>명 찜</span>`;
+}
+function updateWishCount(id,count){
+ if(!wishlistReady)return;
+ wishCounts[id]=Math.max(0,Number(count)||0);
+ document.querySelectorAll(".wish-count[data-wish-id]").forEach(el=>{
+  if(el.dataset.wishId!==String(id))return;
+  const n=wishCounts[id];el.innerHTML=`♡ <b>${n.toLocaleString("ko-KR")}</b>명 찜`;
+  el.setAttribute("aria-label",`현재 ${n}명이 찜했어요`);
+ });
+ const modal=document.querySelector("#modalWishCount");
+ if(modal&&!document.querySelector("#productModal").classList.contains("hidden")&&document.querySelector("#modalId").textContent===String(id)){
+  modal.innerHTML=wishCountHtml(id);
+ }
+}
+function updateAllWishCounts(counts){
+ for(const id of Object.keys(wishCounts))delete wishCounts[id];
+ for(const [id,n] of Object.entries(counts||{}))wishCounts[id]=Math.max(0,Number(n)||0);
+ wishlistReady=true;
+ render();
+ if(!document.querySelector("#productModal").classList.contains("hidden")){
+  const id=document.querySelector("#modalId").textContent;
+  const modal=document.querySelector("#modalWishCount");
+  if(modal)modal.innerHTML=wishCountHtml(id);
+ }
+}
+function syncWishChange(id,selected){
+ if(!wishlistEndpoint)return;
+ // 동일 상품을 빠르게 여러 번 누른 경우에도 서버 요청 순서 유지.
+ const prev=wishlistQueues.get(id)||wishlistInitialSync;
+ const next=prev.catch(()=>{}).then(()=>wishJsonp({action:"set",client:wishClientId(),id,selected:selected?1:0}))
+  .then(data=>{if(data.id===id)updateWishCount(id,data.count)})
+  .catch(error=>console.warn("[당그니네 밭] 찜 수 갱신 지연:",error.message));
+ wishlistQueues.set(id,next);
+ next.finally(()=>{if(wishlistQueues.get(id)===next)wishlistQueues.delete(id)});
+}
+async function refreshWishCounts(){
+ if(!wishlistEndpoint||document.hidden)return;
+ try{const data=await wishJsonp({action:"counts"});updateAllWishCounts(data.counts)}
+ catch(e){console.warn("[당그니네 밭] 찜 수 조회 지연:",e.message)}
+}
+async function startWishCounts(){
+ try{
+  const response=await fetch("wishlist-config.json?"+Date.now(),{cache:"no-store"});
+  if(!response.ok)return;
+  const config=await response.json(),url=String(config.webAppUrl||"").trim();
+  if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url))return;
+  wishlistEndpoint=url;
+  // 기존 바구니 상품도 첫 접속 시 서버에 동기화. 한 브라우저는 한 명.
+  const ids=[...F].filter(id=>/^[A-Za-z0-9_-]{1,40}$/.test(id));
+  wishlistInitialSync=wishJsonp({action:"sync",client:wishClientId(),ids:ids.join(",")});
+  const data=await wishlistInitialSync;
+  updateAllWishCounts(data.counts);
+  setInterval(refreshWishCounts,180000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshWishCounts()});
+ }catch(e){console.warn("[당그니네 밭] 찜 수 연결 대기:",e.message)}
+}
+(function addWishStyles(){
+ const style=document.createElement("style");
+ style.textContent=`.wish-count{display:inline-flex;align-items:center;gap:3px;font-size:11px;line-height:1.4;color:#a86c79;background:#fff5f6;border:1px solid #f2e0e2;border-radius:999px;padding:3px 8px;white-space:nowrap}
+ .wish-count b{font-weight:700;color:#9c5364}
+ #modalWishCount{margin:7px 0 3px}
+ @media(max-width:600px){.wish-count{font-size:10px;padding:2px 7px}}`;
+ document.head.appendChild(style);
+ const heading=document.querySelector("#modalName");
+ if(heading&&!document.querySelector("#modalWishCount")){
+  const holder=document.createElement("div");holder.id="modalWishCount";
+  heading.insertAdjacentElement("afterend",holder);
+ }
+})();
+
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
-function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render()}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">🧺</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">🧺</button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${wishlistReady?`<div data-wish-id="${esc(p.id)}" class="wish-count" aria-label="현재 ${Math.max(0,Number(wishCounts[p.id])||0)}명이 찜했어요">♡ <b>${(Math.max(0,Number(wishCounts[p.id])||0)).toLocaleString("ko-KR")}</b>명 찜</div>`:""}${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]"))openDetail(c.dataset.id)});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
@@ -44,7 +197,7 @@ $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이�
 const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(0,document.querySelector(".shop-toolbar").offsetTop-24),behavior:"smooth"})};
 document.querySelectorAll("#pagination [data-p]").forEach(b=>b.onclick=()=>go(+b.dataset.p));$("#pageJump").onsubmit=ev=>{ev.preventDefault();const n=Number($("#pageNumber").value);if(Number.isInteger(n)&&n>=1&&n<=pages)go(n)};}
 
-function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
+function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";const modalWish=$("#modalWishCount");if(modalWish)modalWish.innerHTML=wishCountHtml(p.id);$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
 function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
 async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),h=$("#copyHint");if(!names.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}let t=names.join("\n");try{await navigator.clipboard.writeText(t)}catch(e){let x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}h.textContent=`${names.length}개 작물명이 복사됐어요!`;setTimeout(()=>location.href=SETTINGS.kakaoUrl,350)}
 $("#sortFilter").onchange=()=>{page=1;render()};
@@ -70,6 +223,7 @@ async function startShop(){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSheet()});
 }
 startShop();
+startWishCounts();
 
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per)page=Math.floor(first/per)+1;render()},120)});
 
