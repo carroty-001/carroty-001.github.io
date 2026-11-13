@@ -200,7 +200,7 @@ async function startWishCounts(){
  style.textContent=`
  /* 서로 겹치지 않는 원 2개: 위 작은 숫자 원, 아래 기존 크기의 바구니 원 */
  .product-card button.heart.wish-basket-stack{
-  position:absolute;display:block;box-sizing:border-box;
+  position:absolute;top:1px;right:12px;display:block;box-sizing:border-box;
   width:36px;height:60px;min-width:36px;min-height:60px;
   padding:0;margin:0;border:0;border-radius:0;
   background:transparent;box-shadow:none;
