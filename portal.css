@@ -242,3 +242,18 @@ iframe[hidden] {display:none}
   .portal-brand { height: 43px; }
   .portal-brand strong { font-size: 27px; }
 }
+
+/* 당그니네 로고: 기존 크기 유지, 기존 위치에서 추가 3px 위로 이동 */
+.portal-brand strong {
+  font-size: 45px;
+  transform: translateY(-8px) rotate(-2deg);
+}
+@media (min-width: 701px) and (max-width: 900px) {
+  .portal-brand strong { font-size: 42px; }
+}
+@media (max-width: 700px) {
+  .portal-brand strong { font-size: 34px; transform: translateY(-7px) rotate(-2deg); }
+}
+@media (max-width: 390px) {
+  .portal-brand strong { font-size: 28px; }
+}
