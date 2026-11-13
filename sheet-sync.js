@@ -31,6 +31,6 @@ function fetchSheetProducts(){return new Promise((resolve,reject)=>{
  window[callback]=data=>{try{if(data.status!=='ok'||!data.table)throw Error('시트 읽기 실패');const p=sheetProducts(data.table);clean();resolve(p)}catch(e){clean();reject(e)}};
  script.onerror=()=>{clean();reject(Error('시트 연결 실패'))};timer=setTimeout(()=>{clean();reject(Error('시트 응답 지연'))},20000);
  const q=new URLSearchParams({gid:'442445190',headers:'1',tqx:'out:json;responseHandler:'+callback,tq:'select A,B,C,D,E,F,G,H,I,J,K,L',_t:String(Date.now())});
- script.src='https://docs.google.com/spreadsheets/d/1jlgGsTFCeBiffAe7UDdMJFTKizMLA6ex/gviz/tq?'+q;
+ script.src='https://docs.google.com/spreadsheets/d/1k-RcpGW7y9GeGgmAuym2olddsfyR6WMXj1XtJympgGM/gviz/tq?'+q;
  document.head.appendChild(script);
 })}
