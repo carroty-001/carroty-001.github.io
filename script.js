@@ -219,14 +219,14 @@ async function startWishCounts(){
  .product-card button.heart.wish-basket-stack.faved::before{
   background:#fff3e4;
  }
- /* 찜 숫자 원: 17px, 상단 여백과 중앙 정렬을 확보하고 바구니 원과 분리 */
+ /* 찜 숫자: 작은 둥근 네모. 바구니 원은 그대로 두고 숫자만 4px 내림 */
  .product-card button.heart.wish-basket-stack .wish-inline-count{
-  position:absolute;z-index:2;top:3px;left:50%;
+  position:absolute;z-index:2;top:7px;left:50%;
   transform:translateX(-50%);
   display:flex;align-items:center;justify-content:center;
-  box-sizing:border-box;width:17px;height:17px;
-  min-width:17px;min-height:17px;
-  margin:0;padding:0;border:0;border-radius:50%;
+  box-sizing:border-box;width:24px;height:14px;
+  min-width:24px;min-height:14px;
+  margin:0;padding:0 3px;border:0;border-radius:7px;
   background:#fff;color:#745f51;
   box-shadow:0 1px 5px rgba(66,58,44,.13);
   font:700 9px/1 'Noto Sans KR',sans-serif;
@@ -234,7 +234,7 @@ async function startWishCounts(){
   pointer-events:none;
  }
  .product-card button.heart.wish-basket-stack .wish-inline-count.wish-many{
-  font-size:7px;
+  font-size:8px;
  }
  .product-card button.heart.wish-basket-stack .basket-emoji{
   position:absolute;z-index:1;left:50%;bottom:6px;
