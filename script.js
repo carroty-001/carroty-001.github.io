@@ -31,7 +31,56 @@ function dr(p){let v=p.discount??p.discountRate??p.discount_rate??0;if(typeof v=
 function sale(p){return Number((Number(p.price||0)*(1-dr(p)/100)).toFixed(10))}
 function price(p){if(productStatuses(p).includes("unavailable"))return `<div class="product-price">-</div>`;if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
 function isNew(p){let raw=p.date||p.registeredAt||p.registered_at;if(!raw)return false;let d=new Date(String(raw).replace(/\./g,"-")+"T00:00:00");if(isNaN(d))return false;let n=new Date();n.setHours(0,0,0,0);let diff=Math.floor((n-d)/86400000);return diff>=0&&diff<3}
-function badges(p){return `<div class="badge-stack">${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+// 최근 7일 검색 + 검색 결과 상품 클릭 TOP 10
+const hotProductIds=new Set();
+let hotSearchTimer=null;
+const hotSearchDelayMs=1100;
+function hotSearchMatches(){
+ const q=searchKey($("#searchInput").value);
+ if(q.length<2)return [];
+ // 화면의 실제 검색 결과에만 검색 점수를 부여합니다.
+ const matched=filtered();
+ if(!matched.length||matched.length>10)return [];
+ return matched.map(p=>({id:String(p.id),name:String(p.name||"")}));
+}
+function scheduleHotSearch(){
+ clearTimeout(hotSearchTimer);
+ hotSearchTimer=setTimeout(()=>{
+  const items=hotSearchMatches();
+  if(items.length)sendHotEvent("search",items,searchKey($("#searchInput").value));
+ },hotSearchDelayMs);
+}
+async function sendHotEvent(type,items,query=""){
+ if(!wishlistEndpoint||!items.length)return;
+ try{
+  await wishJsonp({action:"track",type,client:wishClientId(),
+   items:JSON.stringify(items.slice(0,10)),q:query.slice(0,100)});
+  // 새 순위는 다른 방문자에게도 자동으로 반영됩니다.
+  queueHotRefresh();
+ }catch(error){console.warn("[당그니네 밭] 인기 집계 대기:",error.message)}
+}
+let hotRefreshTimer=null;
+function queueHotRefresh(){
+ clearTimeout(hotRefreshTimer);
+ hotRefreshTimer=setTimeout(refreshHotProducts,1200);
+}
+async function refreshHotProducts(){
+ if(!wishlistEndpoint||document.hidden)return;
+ try{
+  const data=await wishJsonp({action:"hot"});
+  const ids=(data.items||[]).slice(0,10).map(item=>String(item.id));
+  if(ids.join("|")!==[...hotProductIds].join("|")){
+   hotProductIds.clear();ids.forEach(id=>hotProductIds.add(id));render();
+  }
+ }catch(error){console.warn("[당그니네 밭] HOT 순위 대기:",error.message)}
+}
+function startHotTracking(){
+ if(!wishlistEndpoint)return;
+ refreshHotProducts();
+ setInterval(refreshHotProducts,180000);
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshHotProducts()});
+}
+function badges(p){return `<div class="badge-stack">${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -232,6 +281,14 @@ async function startWishCounts(){
  .product-card button.heart.wish-basket-stack .wish-inline-count.wish-many{
   font-size:8px;
  }
+ /* HOT badge: overlay on product photo, keep original NEW and sale badges */
+ .product-card .auto-badge.hot{
+  background:#fff1dc;color:#b35d30;
+  border:1px solid #f3cc9f;border-radius:6px;
+  box-shadow:0 1px 4px rgba(90,58,26,.12);
+  font-size:9px;font-weight:800;white-space:nowrap;
+ }
+ .product-card .badge-stack{flex-wrap:wrap;max-width:calc(100% - 55px)}
  .product-card button.heart.wish-basket-stack .basket-emoji{
   position:absolute;z-index:1;left:50%;bottom:6px;
   transform:translateX(-50%);
@@ -247,7 +304,7 @@ async function startWishCounts(){
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
 function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
-document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]"))openDetail(c.dataset.id)});
+document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]")){const p=P.find(x=>String(x.id)===c.dataset.id);if(p&&searchKey($("#searchInput").value).length>=2)sendHotEvent("click",[{id:String(p.id),name:String(p.name||"")}],searchKey($("#searchInput").value));openDetail(c.dataset.id)}});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
 $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이지 · 한 페이지에 ${per}개 작물</div><div class="page-buttons">`+pb(1,'&lt;','첫 페이지로 이동',page===1)+Array.from({length:e-s+1},(_,i)=>s+i).map(n=>`<button class="${n===page?"on":""}" data-p="${n}" aria-label="${n} 페이지" ${n===page?'aria-current="page"':''}>${n}</button>`).join("")+pb(pages,'&gt;','마지막 페이지로 이동',page===pages)+`</div><form class="page-jump" id="pageJump"><label for="pageNumber">페이지 바로 가기</label><input id="pageNumber" type="number" inputmode="numeric" min="1" max="${pages}" value="${page}" aria-label="이동할 페이지 번호" required><button type="submit">이동</button></form>`;
@@ -258,7 +315,7 @@ function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage")
 function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
 async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),h=$("#copyHint");if(!names.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}let t=names.join("\n");try{await navigator.clipboard.writeText(t)}catch(e){let x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}h.textContent=`${names.length}개 작물명이 복사됐어요!`;setTimeout(()=>location.href=SETTINGS.kakaoUrl,350)}
 $("#sortFilter").onchange=()=>{page=1;render()};
-$("#searchInput").oninput=()=>{page=1;render()};$("#clearSearch").onclick=()=>{$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
+$("#searchInput").oninput=()=>{page=1;render();scheduleHotSearch()};$("#clearSearch").onclick=()=>{clearTimeout(hotSearchTimer);$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
 document.querySelectorAll("[data-close-modal]").forEach(x=>x.onclick=()=>{$("#productModal").classList.add("hidden");document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favoritePanel").classList.add("hidden");document.body.style.overflow=""});
 let syncing=false;
 function syncMessage(t){}
@@ -281,7 +338,7 @@ async function startShop(){
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSheet()});
 }
 startShop();
-startWishCounts();
+startWishCounts().then(startHotTracking);
 
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{let old=per,first=(page-1)*per;setPer();if(old!==per)page=Math.floor(first/per)+1;render()},120)});
 
