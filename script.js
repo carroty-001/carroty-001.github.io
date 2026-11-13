@@ -198,9 +198,9 @@ async function startWishCounts(){
 (function addWishStyles(){
  const style=document.createElement("style");
  style.textContent=`
- /* 서로 겹치지 않는 원 2개: 위 작은 숫자 원, 아래 기존 크기의 바구니 원 */
+ /* 두 원을 분리 유지: 전체 오른쪽 4px·위쪽 2px, 숫자 원 17px로 축소 */
  .product-card button.heart.wish-basket-stack{
-  position:absolute;top:1px;right:12px;display:block;box-sizing:border-box;
+  position:absolute;top:-1px;right:8px;display:block;box-sizing:border-box;
   width:36px;height:60px;min-width:36px;min-height:60px;
   padding:0;margin:0;border:0;border-radius:0;
   background:transparent;box-shadow:none;
@@ -219,22 +219,22 @@ async function startWishCounts(){
  .product-card button.heart.wish-basket-stack.faved::before{
   background:#fff3e4;
  }
- /* 찜 숫자 전용 작은 원: 바구니 원과 5px 떨어져 있음 */
+ /* 찜 숫자 원: 17px, 상단 여백과 중앙 정렬을 확보하고 바구니 원과 분리 */
  .product-card button.heart.wish-basket-stack .wish-inline-count{
-  position:absolute;z-index:2;top:0;left:50%;
+  position:absolute;z-index:2;top:3px;left:50%;
   transform:translateX(-50%);
   display:flex;align-items:center;justify-content:center;
-  box-sizing:border-box;width:19px;height:19px;
-  min-width:19px;min-height:19px;
-  margin:0;padding:0 2px;border:0;border-radius:50%;
+  box-sizing:border-box;width:17px;height:17px;
+  min-width:17px;min-height:17px;
+  margin:0;padding:0;border:0;border-radius:50%;
   background:#fff;color:#745f51;
   box-shadow:0 1px 5px rgba(66,58,44,.13);
-  font:700 10px/1 'Noto Sans KR',sans-serif;
+  font:700 9px/1 'Noto Sans KR',sans-serif;
   font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap;
   pointer-events:none;
  }
  .product-card button.heart.wish-basket-stack .wish-inline-count.wish-many{
-  font-size:8px;
+  font-size:7px;
  }
  .product-card button.heart.wish-basket-stack .basket-emoji{
   position:absolute;z-index:1;left:50%;bottom:6px;
