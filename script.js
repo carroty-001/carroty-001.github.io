@@ -69,19 +69,17 @@ function registeredTime(p){
  const time=Date.parse(normalized);
  return Number.isFinite(time)?time:0;
 }
-// 기존 HTML을 건드리지 않고 정렬 옵션을 추가합니다.
+// 기본 정렬 하나에 등록일 최신순 + 같은 날짜 내 가나다순을 합칩니다.
 function setupSortOptions(){
  const select=$("#sortFilter");if(!select)return;
  const label=select.closest("label");
  const title=label?.querySelector("span");if(title)title.textContent="정렬 기준";
  select.setAttribute("aria-label","정렬 기준");
  const base=select.querySelector('option[value="default"]');
- if(base)base.textContent="기본 정렬 (가나다순)";
- if(!select.querySelector('option[value="newest"]')){
-  const option=document.createElement("option");
-  option.value="newest";option.textContent="등록일자 최근순";
-  if(base)base.after(option);else select.prepend(option);
- }
+ if(base)base.textContent="기본 정렬";
+ // 이전 버전에서 추가했던 별도 최신순 옵션을 제거합니다.
+ select.querySelectorAll('option[value="newest"]').forEach(option=>option.remove());
+ select.value="default";
 }
 setupSortOptions();
 function filtered(){
@@ -94,11 +92,9 @@ function filtered(){
   result=candidates.filter(p=>fields(p).some(x=>nearSearch(q,x)));
  const order=$("#sortFilter").value;
  const byName=(a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ko",{numeric:true});
- if(order==="default")return result.sort((a,b)=>byName(a,b)||registeredTime(b)-registeredTime(a));
- if(order==="newest")return result.sort((a,b)=>{
-  const aTime=registeredTime(a),bTime=registeredTime(b);
-  return (bTime-aTime)||byName(a,b);
- });
+ if(order==="default")return result.sort((a,b)=>
+  (registeredTime(b)-registeredTime(a))||byName(a,b)
+ );
  return result.sort((a,b)=>{
   if(a.price==null&&b.price==null)return byName(a,b);
   if(a.price==null)return 1;
