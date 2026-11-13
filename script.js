@@ -144,14 +144,15 @@ function wishJsonp(params){
 function wishCountHtml(id){
  if(!wishlistReady)return "";
  const count=Math.max(0,Number(wishCounts[id])||0);
- return `<span class="wish-inline-count" data-wish-id="${esc(id)}" aria-label="현재 ${count}명이 담았어요">${count.toLocaleString("ko-KR")}</span>`;
+ return `<span class="wish-inline-count${count>=100?" wish-many":""}" data-wish-id="${esc(id)}" aria-label="현재 ${count}명이 담았어요">${count>=100?"99+":count.toLocaleString("ko-KR")}</span>`;
 }
 function updateWishCount(id,count){
  if(!wishlistReady)return;
  wishCounts[id]=Math.max(0,Number(count)||0);
  document.querySelectorAll(".wish-inline-count[data-wish-id]").forEach(el=>{
   if(el.dataset.wishId!==String(id))return;
-  const n=wishCounts[id];el.textContent=n.toLocaleString("ko-KR");
+  const n=wishCounts[id];el.textContent=n>=100?"99+":n.toLocaleString("ko-KR");
+  el.classList.toggle("wish-many",n>=100);
   el.setAttribute("aria-label",`현재 ${n}명이 담았어요`);
  });
 
@@ -197,28 +198,32 @@ async function startWishCounts(){
 (function addWishStyles(){
  const style=document.createElement("style");
  style.textContent=`
+ /* 기존 원형 바구니를 유지하고, 찜 숫자는 원 안의 작은 원형 배지로 표시 */
  .product-card button.heart.wish-basket-stack{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:0;min-width:42px;width:42px;height:51px;min-height:51px;
-  padding:3px 2px 4px;line-height:1;
+  position:absolute;display:block;box-sizing:border-box;
+  width:36px;height:36px;min-width:36px;min-height:36px;
+  padding:0;margin:0;border-radius:50%;
+  overflow:hidden;line-height:1;
  }
  .product-card button.heart.wish-basket-stack .wish-inline-count{
-  position:static;display:block;flex:none;min-width:0;min-height:0;
-  margin:0 0 2px;padding:0;border:0;background:none;box-shadow:none;
-  color:#745f51;font:700 11px/1.05 'Noto Sans KR',sans-serif;
-  font-variant-numeric:tabular-nums;text-align:center;
-  white-space:nowrap;pointer-events:none;
- }
- .product-card button.heart.wish-basket-stack .basket-emoji{
-  display:block;flex:none;font-size:21px;line-height:1.1;
+  position:absolute;z-index:2;top:1px;left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;width:15px;height:15px;min-width:15px;min-height:15px;
+  margin:0;padding:0;border:0;border-radius:50%;
+  background:#fff4dc;color:#6d7d55;
+  font:700 9px/1 'Noto Sans KR',sans-serif;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
   pointer-events:none;
  }
- @media(max-width:600px){
-  .product-card button.heart.wish-basket-stack{
-   min-width:39px;width:39px;height:48px;min-height:48px;padding:3px 2px;
-  }
-  .product-card button.heart.wish-basket-stack .wish-inline-count{font-size:10px;}
-  .product-card button.heart.wish-basket-stack .basket-emoji{font-size:20px;}
+ .product-card button.heart.wish-basket-stack .wish-inline-count.wish-many{
+  width:19px;font-size:7px;
+ }
+ .product-card button.heart.wish-basket-stack .basket-emoji{
+  position:absolute;left:50%;bottom:1px;
+  transform:translateX(-50%);
+  display:block;font-size:20px;line-height:1;
+  pointer-events:none;
  }
  `;
  document.head.appendChild(style);
