@@ -16,7 +16,7 @@ function renderDetailContent(p){
  document.querySelector('#modalDetailImages').innerHTML=sources.map((src,i)=>`<figure class="detail-image"><img src="${esc(src)}" alt="${esc(p.name)} 설명사진 ${i+1}" loading="lazy" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><figcaption class="detail-image-error" hidden>설명사진을 불러오지 못했어요.</figcaption></figure>`).join('');
  document.querySelector('#modalDetailSection').classList.toggle('hidden',!sources.length&&!description.trim());
 }
-let P=[],cat="전체",st="all",page=1,per=18,SETTINGS={categories:[],statuses:[],kakaoUrl:"https://open.kakao.com/o/sFesMABh",newDays:3};
+let P=[],cat="전체",st="selling",page=1,per=18,SETTINGS={categories:[],statuses:[],kakaoUrl:"https://open.kakao.com/o/sFesMABh",newDays:3};
 let F=new Set(JSON.parse(localStorage.getItem("dangniFavs")||"[]"));
 const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const money=n=>Number(n).toLocaleString("ko-KR",{maximumFractionDigits:10});
@@ -29,7 +29,7 @@ function statusBadges(p){return productStatuses(p).map(s=>`<span class="status-b
 function statusText(s){let x=SETTINGS.statuses.find(x=>x.value===s);return x?x.label:({selling:"판매중",soldout:"판매완료",unavailable:"미판매",set:"세트판매"}[s]||s)}
 function dr(p){let v=p.discount??p.discountRate??p.discount_rate??0;if(typeof v==="string")v=v.replace("%","");return Math.max(0,Math.min(100,Number(v)||0))}
 function sale(p){return Number((Number(p.price||0)*(1-dr(p)/100)).toFixed(10))}
-function price(p){if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
+function price(p){if(productStatuses(p).includes("unavailable"))return `<div class="product-price">-</div>`;if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
 function isNew(p){let raw=p.date||p.registeredAt||p.registered_at;if(!raw)return false;let d=new Date(String(raw).replace(/\./g,"-")+"T00:00:00");if(isNaN(d))return false;let n=new Date();n.setHours(0,0,0,0);let diff=Math.floor((n-d)/86400000);return diff>=0&&diff<3}
 function badges(p){return `<div class="badge-stack">${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
@@ -274,6 +274,7 @@ async function startShop(){
  try{const r=await fetch('settings.json?'+Date.now());if(r.ok)SETTINGS={...SETTINGS,...await r.json()}}catch(e){}
  SETTINGS.statuses=[{value:'selling',label:'판매중'},{value:'soldout',label:'판매완료'},{value:'unavailable',label:'미판매'},{value:'set',label:'세트판매'}];
  $("#statusFilter").innerHTML='<option value="all">전체 상태</option>'+SETTINGS.statuses.filter(x=>x.value!=="unknown").map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join('');
+ $("#statusFilter").value=st;
  $("#categoryFilter").onchange=e=>{cat=e.target.value;page=1;render()};saveFav();setPer();
  try{const r=await fetch('products.json?'+Date.now());if(r.ok)applyProducts(await r.json())}catch(e){}
  await refreshSheet();setInterval(()=>{if(!document.hidden)refreshSheet()},180000);
