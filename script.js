@@ -341,7 +341,7 @@ async function startWishCounts(){
  /* 당그니 PICK은 사진 속 '거래 가능' 리본 바로 위, 왼쪽 아래에 단독 표시합니다. */
  .product-card .product-image{position:relative;}
  .product-card .product-image .photo-pick-badge{
-  position:absolute;left:7px;bottom:clamp(9px,calc(6% - 15px),23px);z-index:4;
+  position:absolute;left:8px;bottom:clamp(9px,calc(6% - 15px),23px);z-index:4;
   display:inline-flex;align-items:center;justify-content:center;
   max-width:calc(100% - 12px);
   padding:3.5px 8.5px;box-sizing:border-box;
