@@ -316,8 +316,7 @@ async function startWishCounts(){
   background:#ffe4ee;color:#a83e6b;
   border:1px solid #f5b9cf;border-radius:6px;
   box-shadow:0 1px 4px rgba(90,58,26,.10);
-  font-size:10px;font-weight:900;white-space:nowrap;
-  font-family:'Noto Sans KR',system-ui,sans-serif;
+  font-size:9px;font-weight:800;white-space:nowrap;
  }
  /* 희귀한 옛 시즌 상품용 RELIC 배지: 정렬에는 영향을 주지 않습니다. */
  .product-card .auto-badge.old-item,
@@ -342,14 +341,13 @@ async function startWishCounts(){
  /* 당그니 PICK은 사진 속 '거래 가능' 리본 바로 위, 왼쪽 아래에 단독 표시합니다. */
  .product-card .product-image{position:relative;}
  .product-card .product-image .photo-pick-badge{
-  position:absolute;left:6px;bottom:clamp(21px,calc(6% - 3px),35px);z-index:4;
+  position:absolute;left:6px;bottom:clamp(17px,calc(6% - 7px),31px);z-index:4;
   display:inline-block;max-width:calc(100% - 12px);
-  padding:4px 9px;box-sizing:border-box;
+  padding:3px 8.5px;box-sizing:border-box;
   background:rgba(255,228,238,.97);color:#a83e6b;
   border:1px solid #f5b9cf;border-radius:6px;
   box-shadow:0 1px 5px rgba(90,58,26,.18);
-  font-size:10px;font-weight:900;line-height:1.2;white-space:nowrap;
-  font-family:'Noto Sans KR',system-ui,sans-serif;
+  font-size:9px;font-weight:800;line-height:1.15;white-space:nowrap;
   pointer-events:none;
  }
  /* 상세 화면에서는 모든 배지를 가로로 배치하고 좁으면 다음 줄로 넘깁니다. */
