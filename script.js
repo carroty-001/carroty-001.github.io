@@ -447,7 +447,9 @@ function setupBasketActions(){
  inquireButton.parentNode.insertBefore(row,inquireButton);row.appendChild(inquireButton);
  const clearButton=document.createElement("button");clearButton.type="button";
  clearButton.id="basketClear";clearButton.className="basket-clear";
- clearButton.innerHTML=`<svg class="basket-clear-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 10v6"/><path d="M14 10v6"/></svg><span>모두 비우기</span>`;
+ clearButton.innerHTML=`<svg class="basket-clear-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 10v6"/><path d="M14 10v6"/></svg>`;
+ clearButton.setAttribute("aria-label","장바구니 모두 비우기");
+ clearButton.title="장바구니 모두 비우기";
  clearButton.onclick=clearBasket;row.appendChild(clearButton);
  const style=document.createElement("style");style.textContent=`
  /* 두 버튼의 높이, 내부 글씨와 아이콘을 동일한 중앙선에 맞춥니다. */
@@ -455,14 +457,14 @@ function setupBasketActions(){
  .basket-action-row > .basket-inquiry,
  .basket-action-row > .basket-clear{box-sizing:border-box;height:50px;min-height:50px;max-height:50px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;line-height:1.2;transform:none}
  .basket-action-row > .basket-inquiry{flex:1 1 0;min-width:0;cursor:pointer;text-align:center}
- .basket-action-row > .basket-clear{flex:0 0 auto;gap:8px;padding-left:16px;padding-right:16px;border:0;border-radius:10px;
+ .basket-action-row > .basket-clear{flex:0 0 50px;width:50px;min-width:50px;gap:0;padding-left:0;padding-right:0;border:0;border-radius:10px;
   background:#ffead4;color:#9b4f3b;font:inherit;font-size:14px;font-weight:700;
   line-height:1.2;cursor:pointer;white-space:nowrap;text-align:center}
  .basket-clear-icon{display:block;flex:0 0 19px;width:19px;height:19px;stroke:currentColor;vertical-align:middle}
  .basket-clear > span{display:inline-flex;align-items:center;justify-content:center;line-height:1.2}
  .basket-clear:hover{background:#ffe0bd}
  .basket-item-price{color:#9b4f3b!important;font-weight:700;margin-top:3px!important}
- @media(max-width:390px){.basket-action-row{gap:6px}.basket-action-row > .basket-clear{padding-left:9px;padding-right:9px;font-size:13px;gap:5px}}
+ @media(max-width:390px){.basket-action-row{gap:6px}}
  `;document.head.appendChild(style);
 }
 setupBasketActions();
