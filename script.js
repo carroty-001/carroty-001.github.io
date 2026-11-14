@@ -89,7 +89,7 @@ function hasOldItem(p){return isOldItemTag(p.category)||(Array.isArray(p.tags)&&
 function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t)&&!isOldItemTag(t))}
 // 상품 카드에서는 PICK만 사진 왼쪽 아래로 분리합니다. 상세 팝업에서는 기존 배지 목록을 유지합니다.
 function badges(p,includePick=true){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${includePick&&hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
-function photoPickBadge(p){return hasDangniPick(p)?'<span class="photo-pick-badge">💗 당그니 PICK</span>':''}
+function photoPickBadge(p){return hasDangniPick(p)?'<span class="photo-pick-badge"><span class="pick-heart" aria-hidden="true">💗</span><span class="pick-text">당그니 PICK</span></span>':''}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -341,14 +341,22 @@ async function startWishCounts(){
  /* 당그니 PICK은 사진 속 '거래 가능' 리본 바로 위, 왼쪽 아래에 단독 표시합니다. */
  .product-card .product-image{position:relative;}
  .product-card .product-image .photo-pick-badge{
-  position:absolute;left:6px;bottom:clamp(17px,calc(6% - 7px),31px);z-index:4;
-  display:inline-block;max-width:calc(100% - 12px);
-  padding:3px 8.5px;box-sizing:border-box;
+  position:absolute;left:7px;bottom:clamp(15px,calc(6% - 9px),29px);z-index:4;
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  max-width:calc(100% - 12px);
+  padding:4px 9px;box-sizing:border-box;
   background:rgba(255,228,238,.97);color:#a83e6b;
   border:1px solid #f5b9cf;border-radius:6px;
   box-shadow:0 1px 5px rgba(90,58,26,.18);
-  font-size:9px;font-weight:800;line-height:1.15;white-space:nowrap;
+  font-size:10px;font-weight:800;line-height:1.15;white-space:nowrap;
   pointer-events:none;
+ }
+ .product-card .product-image .photo-pick-badge .pick-heart{
+  display:inline-flex;align-items:center;justify-content:center;
+  flex:0 0 auto;line-height:1;
+ }
+ .product-card .product-image .photo-pick-badge .pick-text{
+  display:inline-block;line-height:1.15;
  }
  /* 상세 화면에서는 모든 배지를 가로로 배치하고 좁으면 다음 줄로 넘깁니다. */
  #modalBadges .badge-stack{
