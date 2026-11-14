@@ -447,15 +447,19 @@ function setupBasketActions(){
  inquireButton.parentNode.insertBefore(row,inquireButton);row.appendChild(inquireButton);
  const clearButton=document.createElement("button");clearButton.type="button";
  clearButton.id="basketClear";clearButton.className="basket-clear";
- clearButton.textContent="🗑 모두 비우기";clearButton.onclick=clearBasket;row.appendChild(clearButton);
+ clearButton.innerHTML=`<svg class="basket-clear-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 10v6"/><path d="M14 10v6"/></svg><span>모두 비우기</span>`;
+ clearButton.onclick=clearBasket;row.appendChild(clearButton);
  const style=document.createElement("style");style.textContent=`
  .basket-action-row{display:flex;align-items:stretch;gap:8px;margin-top:20px}
  .basket-action-row .basket-inquiry{flex:1;min-width:0;margin-top:0;cursor:pointer}
- .basket-clear{flex:0 0 auto;padding:12px 11px;border:0;border-radius:8px;
-  background:#ffead4;color:#9b4f3b;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+ .basket-clear{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:46px;padding:11px 14px;border:0;border-radius:10px;
+  background:#ffead4;color:#9b4f3b;font:inherit;font-size:14px;font-weight:700;
+  line-height:1.2;cursor:pointer;white-space:nowrap}
+ .basket-clear-icon{display:block;flex:0 0 19px;width:19px;height:19px;stroke:currentColor}
  .basket-clear:hover{background:#ffe0bd}
  .basket-item-price{color:#9b4f3b!important;font-weight:700;margin-top:3px!important}
- @media(max-width:390px){.basket-action-row{gap:6px}.basket-clear{padding:10px 7px;font-size:12px}}
+ @media(max-width:390px){.basket-action-row{gap:6px}.basket-clear{padding:10px 9px;font-size:13px;gap:5px}}
  `;document.head.appendChild(style);
 }
 setupBasketActions();
