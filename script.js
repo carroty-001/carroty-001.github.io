@@ -413,8 +413,52 @@ const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(
 document.querySelectorAll("#pagination [data-p]").forEach(b=>b.onclick=()=>go(+b.dataset.p));$("#pageJump").onsubmit=ev=>{ev.preventDefault();const n=Number($("#pageNumber").value);if(Number.isInteger(n)&&n>=1&&n<=pages)go(n)};}
 
 function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=displayTags(p).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
-function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
-async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),h=$("#copyHint");if(!names.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}let t=names.join("\n");try{await navigator.clipboard.writeText(t)}catch(e){let x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}h.textContent=`${names.length}개 작물명이 복사됐어요!`;setTimeout(()=>location.href=SETTINGS.kakaoUrl,350)}
+// 바구니의 가격 표시는 상품 카드와 동일하게 할인 적용 후 가격을 사용합니다.
+function basketPriceText(p){
+ if(productStatuses(p).includes("unavailable"))return "-";
+ if(p.price===null||p.price===undefined||String(p.price).trim()==="")return "가격문의";
+ const amount=dr(p)?sale(p):Number(p.price);
+ return Number.isFinite(amount)?money(amount):String(p.price);
+}
+function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small><small class="basket-item-price">${esc(basketPriceText(p))}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
+async function inquire(){
+ const items=P.filter(p=>F.has(p.id)&&p.name),h=$("#copyHint");
+ if(!items.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}
+ const t=items.map(p=>`${p.name} ${basketPriceText(p)}`).join("\n");
+ try{await navigator.clipboard.writeText(t)}catch(e){
+  const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();
+  const copied=document.execCommand("copy");x.remove();
+  if(!copied){h.textContent="복사에 실패했어요. 다시 눌러주세요.";return}
+ }
+ h.textContent=`${items.length}개 작물명과 가격이 복사됐어요!`;
+ setTimeout(()=>location.href=SETTINGS.kakaoUrl,350);
+}
+function clearBasket(){
+ const h=$("#copyHint");
+ if(!F.size){h.textContent="바구니가 이미 비어 있어요 🌱";return}
+ if(!window.confirm(`바구니에 담긴 ${F.size}개 상품을 모두 비울까요?`))return;
+ const ids=[...F];F.clear();saveFav();render();showFav();
+ ids.forEach(id=>syncWishChange(id,false)); // 찜현황 시트의 공용 찜 수도 함께 갱신
+ h.textContent="바구니를 모두 비웠어요 🧺";
+}
+function setupBasketActions(){
+ const inquireButton=$("#basketInquiry");if(!inquireButton||$("#basketClear"))return;
+ const row=document.createElement("div");row.className="basket-action-row";
+ inquireButton.parentNode.insertBefore(row,inquireButton);row.appendChild(inquireButton);
+ const clearButton=document.createElement("button");clearButton.type="button";
+ clearButton.id="basketClear";clearButton.className="basket-clear";
+ clearButton.textContent="🗑 모두 비우기";clearButton.onclick=clearBasket;row.appendChild(clearButton);
+ const style=document.createElement("style");style.textContent=`
+ .basket-action-row{display:flex;align-items:stretch;gap:8px;margin-top:20px}
+ .basket-action-row .basket-inquiry{flex:1;min-width:0;margin-top:0;cursor:pointer}
+ .basket-clear{flex:0 0 auto;padding:12px 11px;border:0;border-radius:8px;
+  background:#ffead4;color:#9b4f3b;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+ .basket-clear:hover{background:#ffe0bd}
+ .basket-item-price{color:#9b4f3b!important;font-weight:700;margin-top:3px!important}
+ @media(max-width:390px){.basket-action-row{gap:6px}.basket-clear{padding:10px 7px;font-size:12px}}
+ `;document.head.appendChild(style);
+}
+setupBasketActions();
 $("#sortFilter").onchange=()=>{page=1;render()};
 $("#searchInput").oninput=()=>{page=1;render();scheduleHotSearch()};$("#clearSearch").onclick=()=>{clearTimeout(hotSearchTimer);$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
 document.querySelectorAll("[data-close-modal]").forEach(x=>x.onclick=()=>{$("#productModal").classList.add("hidden");document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favoritePanel").classList.add("hidden");document.body.style.overflow=""});
