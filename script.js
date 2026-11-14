@@ -81,10 +81,13 @@ function startHotTracking(){
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshHotProducts()});
 }
 // 구글 스프레드시트의 '태그' 열에 '당그니 PICK'을 넣으면 추천 배지만 표시합니다.
-function isDangniPickTag(t){return String(t??'').normalize('NFKC').replace(/\s+/g,'').toLocaleLowerCase('ko-KR')==='당그니pick'}
+function isDangniPickTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='당그니pick'||v==='당그니픽'}
 function hasDangniPick(p){return Array.isArray(p.tags)&&p.tags.some(isDangniPickTag)}
-function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t))}
-function badges(p){return `<div class="badge-stack">${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+// 기존 '구템' 입력을 유지하면서 '레릭'/'RELIC'도 인식하고 RELIC 배지를 표시합니다.
+function isOldItemTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='구템'||v==='레릭'||v==='relic'}
+function hasOldItem(p){return isOldItemTag(p.category)||(Array.isArray(p.tags)&&p.tags.some(isOldItemTag))}
+function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t)&&!isOldItemTag(t))}
+function badges(p){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -313,7 +316,32 @@ async function startWishCounts(){
   box-shadow:0 1px 4px rgba(90,58,26,.10);
   font-size:9px;font-weight:800;white-space:nowrap;
  }
- .product-card .badge-stack{flex-wrap:wrap;max-width:calc(100% - 55px)}
+ /* 희귀한 옛 시즌 상품용 RELIC 배지: 정렬에는 영향을 주지 않습니다. */
+ .product-card .auto-badge.old-item,
+ #modalBadges .auto-badge.old-item{
+  background:linear-gradient(135deg,#412637 0%,#301b2c 100%);
+  color:#ffddb0;
+  border:1px solid #bc936c;
+  border-radius:6px;
+  box-shadow:0 1px 5px rgba(55,26,41,.24);
+  font-size:9px;font-weight:800;letter-spacing:.35px;white-space:nowrap;
+ }
+ /* 여러 배지가 중복되어도 상품 사진 왼쪽에 모두 세로로 표시합니다. */
+ .product-card .badge-stack{
+  display:flex;flex-direction:column;align-items:flex-start;
+  flex-wrap:nowrap;gap:4px;max-width:calc(100% - 55px);
+  width:max-content;z-index:3;pointer-events:none;
+ }
+ .product-card .badge-stack .auto-badge{
+  display:inline-block;max-width:100%;width:max-content;
+  box-sizing:border-box;white-space:nowrap;line-height:1.15;
+ }
+ /* 상세 화면에서는 모든 배지를 가로로 배치하고 좁으면 다음 줄로 넘깁니다. */
+ #modalBadges .badge-stack{
+  display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;
+  gap:5px;max-width:100%;width:auto;position:static;
+ }
+ #modalBadges .auto-badge{white-space:nowrap;}
  .product-card button.heart.wish-basket-stack .basket-emoji{
   position:absolute;z-index:1;left:50%;bottom:6px;
   transform:translateX(-50%);
