@@ -87,7 +87,9 @@ function hasDangniPick(p){return Array.isArray(p.tags)&&p.tags.some(isDangniPick
 function isOldItemTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='구템'||v==='레릭'||v==='relic'}
 function hasOldItem(p){return isOldItemTag(p.category)||(Array.isArray(p.tags)&&p.tags.some(isOldItemTag))}
 function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t)&&!isOldItemTag(t))}
-function badges(p){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+// 상품 카드에서는 PICK만 사진 왼쪽 아래로 분리합니다. 상세 팝업에서는 기존 배지 목록을 유지합니다.
+function badges(p,includePick=true){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${includePick&&hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+function photoPickBadge(p){return hasDangniPick(p)?'<span class="photo-pick-badge">💗 당그니 PICK</span>':''}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -336,6 +338,18 @@ async function startWishCounts(){
   display:inline-block;max-width:100%;width:max-content;
   box-sizing:border-box;white-space:nowrap;line-height:1.15;
  }
+ /* 당그니 PICK은 사진 속 '거래 가능' 리본 바로 위, 왼쪽 아래에 단독 표시합니다. */
+ .product-card .product-image{position:relative;}
+ .product-card .product-image .photo-pick-badge{
+  position:absolute;left:6px;bottom:clamp(24px,6%,38px);z-index:4;
+  display:inline-block;max-width:calc(100% - 12px);
+  padding:4px 7px;box-sizing:border-box;
+  background:rgba(255,228,238,.97);color:#a83e6b;
+  border:1px solid #f5b9cf;border-radius:6px;
+  box-shadow:0 1px 5px rgba(90,58,26,.18);
+  font-size:9px;font-weight:800;line-height:1.15;white-space:nowrap;
+  pointer-events:none;
+ }
  /* 상세 화면에서는 모든 배지를 가로로 배치하고 좁으면 다음 줄로 넘깁니다. */
  #modalBadges .badge-stack{
   display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;
@@ -356,7 +370,7 @@ async function startWishCounts(){
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${displayTags(p).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p,false)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}${photoPickBadge(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${displayTags(p).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]")){const p=P.find(x=>String(x.id)===c.dataset.id);if(p&&searchKey($("#searchInput").value).length>=2)sendHotEvent("click",[{id:String(p.id),name:String(p.name||"")}],searchKey($("#searchInput").value));openDetail(c.dataset.id)}});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
