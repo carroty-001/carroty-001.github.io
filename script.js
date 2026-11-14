@@ -80,7 +80,11 @@ function startHotTracking(){
  setInterval(refreshHotProducts,180000);
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshHotProducts()});
 }
-function badges(p){return `<div class="badge-stack">${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+// 구글 스프레드시트의 '태그' 열에 '당그니 PICK'을 넣으면 추천 배지만 표시합니다.
+function isDangniPickTag(t){return String(t??'').normalize('NFKC').replace(/\s+/g,'').toLocaleLowerCase('ko-KR')==='당그니pick'}
+function hasDangniPick(p){return Array.isArray(p.tags)&&p.tags.some(isDangniPickTag)}
+function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t))}
+function badges(p){return `<div class="badge-stack">${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -301,6 +305,14 @@ async function startWishCounts(){
   box-shadow:0 1px 4px rgba(90,58,26,.12);
   font-size:9px;font-weight:800;white-space:nowrap;
  }
+ /* 당그니 PICK은 추천 배지만 표시하고 정렬 순서는 바꾸지 않습니다. */
+ .product-card .auto-badge.dangni-pick,
+ #modalBadges .auto-badge.dangni-pick{
+  background:#ffe4ee;color:#a83e6b;
+  border:1px solid #f5b9cf;border-radius:6px;
+  box-shadow:0 1px 4px rgba(90,58,26,.10);
+  font-size:9px;font-weight:800;white-space:nowrap;
+ }
  .product-card .badge-stack{flex-wrap:wrap;max-width:calc(100% - 55px)}
  .product-card button.heart.wish-basket-stack .basket-emoji{
   position:absolute;z-index:1;left:50%;bottom:6px;
@@ -316,7 +328,7 @@ async function startWishCounts(){
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
 function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${displayTags(p).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
 document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]")){const p=P.find(x=>String(x.id)===c.dataset.id);if(p&&searchKey($("#searchInput").value).length>=2)sendHotEvent("click",[{id:String(p.id),name:String(p.name||"")}],searchKey($("#searchInput").value));openDetail(c.dataset.id)}});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
@@ -324,7 +336,7 @@ $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이�
 const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(0,document.querySelector(".shop-toolbar").offsetTop-24),behavior:"smooth"})};
 document.querySelectorAll("#pagination [data-p]").forEach(b=>b.onclick=()=>go(+b.dataset.p));$("#pageJump").onsubmit=ev=>{ev.preventDefault();const n=Number($("#pageNumber").value);if(Number.isInteger(n)&&n>=1&&n<=pages)go(n)};}
 
-function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
+function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=displayTags(p).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
 function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a.length?a.map(p=>`<div class="favorite-row"><div class="thumb">${media(p)}</div><div><b>${esc(p.name)}</b><small>${esc(p.category)}</small></div><button data-r="${esc(p.id)}" aria-label="바구니에서 빼기">×</button></div>`).join(""):`<div class="empty-state"><div>🧺</div></div>`;document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{toggle(b.dataset.r);showFav()});$("#favoritePanel").classList.remove("hidden");document.body.style.overflow="hidden"}
 async function inquire(){let names=P.filter(p=>F.has(p.id)).map(p=>p.name).filter(Boolean),h=$("#copyHint");if(!names.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}let t=names.join("\n");try{await navigator.clipboard.writeText(t)}catch(e){let x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}h.textContent=`${names.length}개 작물명이 복사됐어요!`;setTimeout(()=>location.href=SETTINGS.kakaoUrl,350)}
 $("#sortFilter").onchange=()=>{page=1;render()};
