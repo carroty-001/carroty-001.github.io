@@ -128,6 +128,13 @@ function setupSortOptions(){
  if(base)base.textContent="기본 정렬";
  // 이전 버전에서 추가했던 별도 최신순 옵션을 제거합니다.
  select.querySelectorAll('option[value="newest"]').forEach(option=>option.remove());
+ // 기존 정렬 이름과 옵션을 유지하고 찜 많은 순만 추가합니다.
+ if(!select.querySelector('option[value="mostWished"]')){
+  const option=document.createElement("option");
+  option.value="mostWished";
+  option.textContent="찜 많은 순";
+  select.appendChild(option);
+ }
  select.value="default";
 }
 setupSortOptions();
@@ -142,7 +149,12 @@ function filtered(){
  const order=$("#sortFilter").value;
  const byName=(a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ko",{numeric:true});
  if(order==="default")return result.sort((a,b)=>
-  (registeredTime(b)-registeredTime(a))||byName(a,b)
+  (Number(isNew(b))-Number(isNew(a)))||
+  (Number(hotProductIds.has(String(b.id)))-Number(hotProductIds.has(String(a.id))))||
+  byName(a,b)
+ );
+ if(order==="mostWished")return result.sort((a,b)=>
+  ((Number(wishCounts[String(b.id)])||0)-(Number(wishCounts[String(a.id)])||0))||byName(a,b)
  );
  return result.sort((a,b)=>{
   if(a.price==null&&b.price==null)return byName(a,b);
@@ -200,7 +212,8 @@ function updateWishCount(id,count){
   el.classList.toggle("wish-many",n>=100);
   el.setAttribute("aria-label",`현재 ${n}명이 담았어요`);
  });
-
+ // 찜 많은 순 정렬 중이면 서버에서 받은 최신 수치대로 즉시 재정렬합니다.
+ if($("#sortFilter")?.value==="mostWished")render();
 }
 function updateAllWishCounts(counts){
  for(const id of Object.keys(wishCounts))delete wishCounts[id];
