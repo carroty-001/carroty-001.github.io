@@ -83,13 +83,20 @@ function startHotTracking(){
 // 구글 스프레드시트의 '태그' 열에 '당그니 PICK'을 넣으면 추천 배지만 표시합니다.
 function isDangniPickTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='당그니pick'||v==='당그니픽'}
 function hasDangniPick(p){return Array.isArray(p.tags)&&p.tags.some(isDangniPickTag)}
+// 러빗 PICK: '러빗 PICK', '러빗 픽', '러빗픽'을 같은 태그로 인식합니다.
+function isRabbitPickTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='러빗pick'||v==='러빗픽'}
+function hasRabbitPick(p){return Array.isArray(p.tags)&&p.tags.some(isRabbitPickTag)}
 // 기존 '구템' 입력을 유지하면서 '레릭'/'RELIC'도 인식하고 RELIC 배지를 표시합니다.
 function isOldItemTag(t){const v=String(t??'').normalize('NFKC').replace(/[\s\p{P}\p{S}]+/gu,'').toLocaleLowerCase('ko-KR');return v==='구템'||v==='레릭'||v==='relic'}
 function hasOldItem(p){return isOldItemTag(p.category)||(Array.isArray(p.tags)&&p.tags.some(isOldItemTag))}
-function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t)&&!isOldItemTag(t))}
+function displayTags(p){return (Array.isArray(p.tags)?p.tags:[]).filter(t=>!isDangniPickTag(t)&&!isRabbitPickTag(t)&&!isOldItemTag(t))}
 // 상품 카드에서는 PICK만 사진 왼쪽 아래로 분리합니다. 상세 팝업에서는 기존 배지 목록을 유지합니다.
-function badges(p,includePick=true){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${includePick&&hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
-function photoPickBadge(p){return hasDangniPick(p)?'<span class="photo-pick-badge"><span class="pick-content"><span class="pick-heart" aria-hidden="true">💗</span><span class="pick-text">당그니 PICK</span></span></span>':''}
+function badges(p,includePick=true){return `<div class="badge-stack">${hasOldItem(p)?'<span class="auto-badge old-item">✦ RELIC</span>':''}${hotProductIds.has(String(p.id))?'<span class="auto-badge hot">🔥 HOT</span>':''}${isNew(p)?'<span class="auto-badge new">NEW</span>':''}${includePick&&hasDangniPick(p)?'<span class="auto-badge dangni-pick">💗 당그니 PICK</span>':''}${includePick&&hasRabbitPick(p)?'<span class="auto-badge rabbit-pick">🐰 러빗 PICK</span>':''}${dr(p)?`<span class="auto-badge sale">${dr(p)}%</span>`:''}</div>`}
+function photoPickBadge(p){
+ const dangni=hasDangniPick(p),rabbit=hasRabbitPick(p);
+ if(!dangni&&!rabbit)return '';
+ return `<div class="photo-pick-row">${dangni?'<span class="photo-pick-badge"><span class="pick-content"><span class="pick-heart" aria-hidden="true">💗</span><span class="pick-text">당그니 PICK</span></span></span>':''}${rabbit?'<span class="photo-pick-badge rabbit-pick"><span class="pick-content"><span class="pick-heart" aria-hidden="true">🐰</span><span class="pick-text">러빗 PICK</span></span></span>':''}</div>`;
+}
 function media(p){let c=cropFor(p);return p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="crop-fallback" role="img" aria-label="작물 이모티콘" style="display:none">${c}</span>`:`<span class="crop-fallback" role="img" aria-label="작물 이모티콘">${c}</span>`}
 // 띄어쓰기·기호 차이를 무시하고 상품명과 태그를 검색합니다.
 function searchKey(value){
@@ -340,16 +347,30 @@ async function startWishCounts(){
  }
  /* 당그니 PICK은 사진 속 '거래 가능' 리본 바로 위, 왼쪽 아래에 단독 표시합니다. */
  .product-card .product-image{position:relative;}
- .product-card .product-image .photo-pick-badge{
+ .product-card .product-image .photo-pick-row{
   position:absolute;left:8px;bottom:clamp(9px,calc(6% - 15px),23px);z-index:4;
+  display:flex;align-items:center;justify-content:flex-start;
+  gap:3px;flex-wrap:wrap;max-width:calc(100% - 12px);
+  pointer-events:none;
+ }
+ .product-card .product-image .photo-pick-badge{
   display:inline-flex;align-items:center;justify-content:center;
-  max-width:calc(100% - 12px);
+  max-width:100%;
   padding:3.5px 8.5px;box-sizing:border-box;
   background:rgba(255,228,238,.97);color:#a83e6b;
   border:1px solid #f5b9cf;border-radius:6px;
   box-shadow:0 1px 5px rgba(90,58,26,.18);
   font-size:10px;font-weight:800;line-height:1.15;white-space:nowrap;
   pointer-events:none;
+ }
+ /* 러빗 PICK: 당그니 PICK과 같은 크기·폰트, 라벤더+보라색 테마 */
+ .product-card .product-image .photo-pick-badge.rabbit-pick,
+ #modalBadges .auto-badge.rabbit-pick{
+  background:#eee3ff;color:#8052ad;border:1px solid #cdb6ee;
+ }
+ #modalBadges .auto-badge.rabbit-pick{
+  border-radius:6px;box-shadow:0 1px 4px rgba(90,58,26,.10);
+  font-size:9px;font-weight:800;white-space:nowrap;
  }
  .product-card .product-image .photo-pick-badge .pick-content{
   display:inline-flex;align-items:center;justify-content:center;gap:3px;
