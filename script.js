@@ -32,8 +32,9 @@ function dr(p){let v=p.discount??p.discountRate??p.discount_rate??0;if(typeof v=
 function sale(p){return Number((Number(p.price||0)*(1-dr(p)/100)).toFixed(10))}
 function price(p){if(productStatuses(p).some(s=>s==="unavailable"||s==="soldout"))return `<div class="product-price">-</div>`;if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
 function isNew(p){let raw=p.date||p.registeredAt||p.registered_at;if(!raw)return false;let d=new Date(String(raw).replace(/\./g,"-")+"T00:00:00");if(isNaN(d))return false;let n=new Date();n.setHours(0,0,0,0);let diff=Math.floor((n-d)/86400000);return diff>=0&&diff<3}
-// HOT: 최근 7일 검색 + 실제 상품 클릭 + 현재 찜 수. 검색만으로 HOT에 오르지 않습니다.
+// HOT: 브라우저·상품별 검색 +0.5 / 클릭 +0.5 / 현재 찜 +0.5. 검색만으로 TOP10에 오르지 않습니다.
 const hotProductIds=new Set();
+let isAdminDevice=false;
 let hotSearchTimer=null;
 const hotSearchDelayMs=1100;
 function hotSearchMatches(){
@@ -52,7 +53,7 @@ function scheduleHotSearch(){
  },hotSearchDelayMs);
 }
 async function sendHotEvent(type,items,query=""){
- if(!wishlistEndpoint||!items.length)return;
+ if(!wishlistEndpoint||!items.length||isAdminDevice)return;
  try{
   await wishJsonp({action:"track",type,client:wishClientId(),
    items:JSON.stringify(items.slice(0,10)),q:query.slice(0,100)});
@@ -223,6 +224,90 @@ function wishJsonp(params){
   script.src=url.toString();document.head.appendChild(script);
  });
 }
+// 관리자 기기: 비밀번호는 POST 본문으로만 보내고 브라우저에 저장하지 않습니다.
+async function refreshAdminDevice(){
+ if(!wishlistEndpoint)return false;
+ const data=await wishJsonp({action:"adminStatus",client:wishClientId()});
+ isAdminDevice=!!data.admin;
+ return isAdminDevice;
+}
+async function postAdminAction(action,password=""){
+ if(!wishlistEndpoint)throw Error("찜·HOT 연결을 먼저 확인해 주세요.");
+ const body=new URLSearchParams({action,client:wishClientId()});
+ if(action==="adminLogin")body.set("password",password);
+ // Apps Script는 다른 도메인의 POST 응답을 읽을 수 없어 상태를 별도 조회합니다.
+ await fetch(wishlistEndpoint,{method:"POST",mode:"no-cors",body,redirect:"follow"});
+ for(let i=0;i<7;i++){
+  await new Promise(resolve=>setTimeout(resolve,650));
+  try{
+   const admin=await refreshAdminDevice();
+   if(action==="adminLogin"&&admin || action==="adminLogout"&&!admin)return true;
+  }catch(e){}
+ }
+ return false;
+}
+function setupAdminPanel(){
+ if(new URLSearchParams(location.search).get("admin")!=="1")return;
+ const overlay=document.createElement("div");overlay.id="dangniAdminOverlay";
+ overlay.innerHTML=`<section class="dangni-admin-card" role="dialog" aria-modal="true" aria-label="관리자 기기 등록">
+  <button type="button" id="dangniAdminClose" class="dangni-admin-close" aria-label="닫기">×</button>
+  <h2>🥕 관리자 기기 등록</h2>
+  <p>이 기기의 검색·클릭·찜을 HOT 집계에서 제외해요.<br>HOT 점수는 검색·클릭·찜 각각 0.5점이에요.<br>장바구니와 상품 조회는 그대로 사용할 수 있어요.</p>
+  <form id="dangniAdminForm"><label for="dangniAdminPassword">관리자 비밀번호</label>
+  <input id="dangniAdminPassword" type="password" autocomplete="off" required minlength="12" placeholder="Apps Script에 설정한 비밀번호">
+  <button type="submit">관리자로 등록하기</button></form>
+  <button type="button" id="dangniAdminLogout">이 기기 관리자 해제</button>
+  <p id="dangniAdminMessage" role="status"></p>
+ </section>`;
+ const style=document.createElement("style");style.textContent=`
+ #dangniAdminOverlay{position:fixed;inset:0;z-index:99999;background:rgba(25,24,20,.55);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+ .dangni-admin-card{position:relative;background:#fffdf9;color:#4a403a;border-radius:18px;padding:25px 20px 20px;width:min(100%,390px);box-sizing:border-box;box-shadow:0 14px 40px #0003;font-family:inherit}
+ .dangni-admin-card h2{font-size:19px;margin:0 0 10px}.dangni-admin-card p{font-size:13px;line-height:1.6;margin:10px 0 18px}
+ .dangni-admin-card label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+ .dangni-admin-card input{width:100%;height:44px;padding:0 12px;border:1px solid #d8c9b8;border-radius:9px;box-sizing:border-box;font:inherit}
+ .dangni-admin-card button{cursor:pointer;font:inherit}
+ .dangni-admin-card form button{width:100%;margin-top:12px;background:#6b8d65;color:white;border:0;border-radius:9px;height:44px;font-weight:700}
+ #dangniAdminLogout{margin-top:10px;width:100%;background:#fff0e0;color:#98603c;border:0;border-radius:9px;height:40px}
+ .dangni-admin-close{position:absolute;right:13px;top:9px;background:none;border:0;font-size:28px;color:#6c625b}
+ #dangniAdminMessage{margin:12px 0 0;font-size:13px;font-weight:700;min-height:20px}
+ `;document.head.appendChild(style);document.body.appendChild(overlay);
+ const message=overlay.querySelector("#dangniAdminMessage");
+ const form=overlay.querySelector("#dangniAdminForm");
+ const input=overlay.querySelector("#dangniAdminPassword");
+ const logout=overlay.querySelector("#dangniAdminLogout");
+ const close=()=>overlay.remove();
+ overlay.querySelector("#dangniAdminClose").onclick=close;
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close()});
+ const setBusy=busy=>{form.querySelector("button").disabled=busy;logout.disabled=busy};
+ const showStatus=async()=>{
+  try{const admin=await refreshAdminDevice();message.textContent=admin?"✅ 이 기기는 관리자 등록 완료!":"이 기기는 아직 관리자 등록 전이에요."}
+  catch(e){message.textContent="찜·HOT 연결 확인 중이에요."}
+ };
+ form.onsubmit=async e=>{
+  e.preventDefault();const password=input.value;
+  if(password.length<12){message.textContent="비밀번호는 12자 이상으로 설정해 주세요.";return}
+  input.value="";setBusy(true);message.textContent="관리자 등록 확인 중...";
+  try{
+   const ok=await postAdminAction("adminLogin",password);
+   message.textContent=ok?"✅ 관리자 등록 완료! 이제 HOT 집계에서 제외돼요.":"등록되지 않았어요. 비밀번호·배포 설정을 확인해 주세요.";
+  }catch(e){message.textContent="연결에 실패했어요. 웹 앱 배포를 확인해 주세요."}
+  finally{setBusy(false)}
+ };
+ logout.onclick=async()=>{
+  setBusy(true);message.textContent="관리자 해제 중...";
+  try{
+   const ok=await postAdminAction("adminLogout");
+   message.textContent=ok?"관리자 해제 완료! 다시 HOT 집계에 반영돼요.":"해제 확인에 실패했어요.";
+  }catch(e){message.textContent="연결에 실패했어요."}
+  finally{setBusy(false)}
+ };
+ const waitForEndpoint=async()=>{
+  for(let i=0;i<20&&!wishlistEndpoint;i++)await new Promise(r=>setTimeout(r,350));
+  if(wishlistEndpoint)await showStatus();else message.textContent="찜·HOT 연결 주소를 확인해 주세요.";
+ };
+ waitForEndpoint();
+}
+
 function wishCountHtml(id){
  if(!wishlistReady)return "";
  const count=Math.max(0,Number(wishCounts[id])||0);
@@ -270,6 +355,7 @@ async function startWishCounts(){
   const config=await response.json(),url=String(config.webAppUrl||"").trim();
   if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url))return;
   wishlistEndpoint=url;
+  refreshAdminDevice().catch(()=>{});
   // 기존 바구니 상품도 첫 접속 시 서버에 동기화. 한 브라우저는 한 명.
   const ids=[...F].filter(id=>/^[A-Za-z0-9_-]{1,40}$/.test(id));
   wishlistInitialSync=wishJsonp({action:"sync",client:wishClientId(),ids:ids.join(",")});
@@ -435,26 +521,12 @@ async function inquire(){
  const items=P.filter(p=>F.has(p.id)&&p.name),h=$("#copyHint");
  if(!items.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}
  let t=items.map(p=>`${p.name} ${basketPriceText(p)}`).join("\n");
- // 서버가 기준 시점에 확정한 쿠폰 대상자에게만 문구를 붙입니다.
- // 쿠폰 금액은 자동으로 차감하지 않으며, 실제 할인은 판매자가 확인합니다.
- if(wishlistEndpoint){
-  try{
-   const coupon=await wishJsonp({action:"coupon",client:wishClientId()});
-   if(coupon.eligible&&coupon.code){
-    t+=`\n\n🎟️ 장바구니 보유 고객 30% 할인쿠폰\n쿠폰코드: ${coupon.code}\n※ 할인은 판매자 확인 후 적용`;
-   }
-  }catch(error){
-   console.warn("[당그니네 밭] 쿠폰 대상 확인 지연:",error.message);
-   h.textContent="쿠폰 대상 확인이 지연되고 있어요. 잠시 후 다시 문의해 주세요.";
-   return;
-  }
- }
  try{await navigator.clipboard.writeText(t)}catch(e){
   const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();
   const copied=document.execCommand("copy");x.remove();
   if(!copied){h.textContent="복사에 실패했어요. 다시 눌러주세요.";return}
  }
- h.textContent=`${items.length}개 작물명·가격${t.includes("쿠폰코드:")?"·30% 쿠폰":""}이 복사됐어요!`;
+ h.textContent=`${items.length}개 작물명·가격이 복사됐어요!`;
  setTimeout(()=>location.href=SETTINGS.kakaoUrl,350);
 }
 function clearBasket(){
@@ -492,6 +564,7 @@ function setupBasketActions(){
  `;document.head.appendChild(style);
 }
 setupBasketActions();
+setupAdminPanel();
 $("#sortFilter").onchange=()=>{page=1;render()};
 $("#searchInput").oninput=()=>{page=1;render();scheduleHotSearch()};$("#clearSearch").onclick=()=>{clearTimeout(hotSearchTimer);$("#searchInput").value="";page=1;render()};$("#statusFilter").onchange=e=>{st=e.target.value;page=1;render()};$("#favoritesBtn").onclick=showFav;$("#basketInquiry").onclick=inquire;
 document.querySelectorAll("[data-close-modal]").forEach(x=>x.onclick=()=>{$("#productModal").classList.add("hidden");document.body.style.overflow=""});document.querySelectorAll("[data-fav-close]").forEach(x=>x.onclick=()=>{$("#favoritePanel").classList.add("hidden");document.body.style.overflow=""});
