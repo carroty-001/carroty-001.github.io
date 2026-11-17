@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>당그니네 · 관리자 기기 등록</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}
+body{margin:0;min-height:100svh;display:grid;place-items:center;background:#f7f7ed;color:#4b4037;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;padding:20px}
+main{width:min(100%,440px);background:#fffaf3;border:1px solid #e7dcc8;border-radius:22px;box-shadow:0 12px 35px #52462912;padding:28px 24px}
+.logo{text-align:center;font-size:30px;margin-bottom:5px}.sub{text-align:center;color:#826d5a;font-size:13px;margin:0 0 20px}
+h1{text-align:center;font-size:23px;margin:0 0 12px}.intro{font-size:14px;line-height:1.8;margin:0 0 22px;text-align:center}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:9px}
+input{width:100%;height:48px;padding:0 13px;border-radius:11px;border:1px solid #cfc4b3;background:white;font-size:16px}
+button{font-family:inherit;cursor:pointer;border:0;border-radius:11px;font-weight:700}
+button:disabled{opacity:.55;cursor:wait}
+.primary{width:100%;height:48px;margin-top:12px;background:#578457;color:white;font-size:15px}
+.secondary{width:100%;height:42px;margin-top:11px;background:#f8e9da;color:#885b42;font-size:14px}
+#status{min-height:42px;margin:16px 0 4px;text-align:center;font-size:14px;line-height:1.6;font-weight:650;white-space:pre-wrap}
+.note{border-top:1px solid #e9dfd0;padding-top:14px;margin-top:14px;color:#786b5d;font-size:12px;line-height:1.8}
+a{color:#527c4b} .success{color:#357a40}.error{color:#ad483b}
+</style>
+</head>
+<body>
+<main>
+ <div class="logo">🥕</div>
+ <p class="sub">DANGNI FARM</p>
+ <h1>관리자 기기 등록</h1>
+ <p class="intro">이 기기에서 검색·클릭·찜을 해도<br><strong>HOT 점수에 반영되지 않도록</strong> 등록해요.<br>장바구니와 상품 조회는 그대로 이용할 수 있어요.</p>
+ <form id="loginForm">
+  <label for="password">관리자 비밀번호</label>
+  <input id="password" type="password" minlength="12" required autocomplete="off" placeholder="Apps Script에서 설정한 비밀번호">
+  <button class="primary" id="login" type="submit">이 기기 관리자로 등록하기</button>
+ </form>
+ <button class="secondary" id="logout" type="button">이 기기 관리자 등록 해제</button>
+ <p id="status" role="status" aria-live="polite">등록 상태 확인 중...</p>
+ <div class="note">💻 컴퓨터 · 📱 휴대폰 · 🍎 아이패드에서 각각 이 페이지에 접속해 등록해 주세요.<br>비밀번호는 브라우저에 저장하지 않습니다.<br><a href="./#farm">← 당그니네 밭으로 돌아가기</a></div>
+</main>
+<script>
+(()=>{'use strict';
+// 이 주소는 사용자가 현재 사용 중이라고 알려준 Apps Script 웹 앱 주소입니다.
+const ENDPOINT='https://script.google.com/macros/s/AKfycbzOKMXo7YI5f7FNbBg49SSd1hQL7phgU3_6Cg2X3BCj2RykOGkyWsCkxw8tsEFh75Wi/exec';
+const CLIENT_KEY='dangniWishlistClientId';
+const status=document.getElementById('status'), form=document.getElementById('loginForm');
+const password=document.getElementById('password'), login=document.getElementById('login'), logout=document.getElementById('logout');
+let seq=0;
+function setStatus(text,kind=''){status.textContent=text;status.className=kind}
+function clientId(){
+ let id=localStorage.getItem(CLIENT_KEY);
+ if(!/^[a-f0-9]{32}$/.test(id||'')){
+  const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
+  id=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+  localStorage.setItem(CLIENT_KEY,id);
+ }
+ return id;
+}
+function jsonp(params){
+ return new Promise((resolve,reject)=>{
+  const cb='dangniWishCb_'+(++seq),node=document.createElement('script');
+  let timer;
+  const clean=()=>{clearTimeout(timer);node.remove();delete window[cb]};
+  window[cb]=data=>{clean();data&&data.ok?resolve(data):reject(Error(data?.error||'서버 응답 오류'))};
+  node.onerror=()=>{clean();reject(Error('서버 연결 실패'))};
+  timer=setTimeout(()=>{clean();reject(Error('응답 시간 초과'))},20000);
+  const url=new URL(ENDPOINT);
+  for(const [key,value] of Object.entries(params))url.searchParams.set(key,String(value));
+  url.searchParams.set('callback',cb);
+  url.searchParams.set('nonce',Date.now()+'_'+seq);
+  node.src=url.toString();document.head.appendChild(node);
+ });
+}
+async function getStatus(){return !!(await jsonp({action:'adminStatus',client:clientId()})).admin}
+function busy(value){login.disabled=value;logout.disabled=value;password.disabled=value}
+async function refresh(){
+ try{const admin=await getStatus();setStatus(admin?'✅ 이 기기는 관리자 등록 완료!':'이 기기는 아직 관리자 등록 전이에요.',admin?'success':'')}
+ catch(e){setStatus('관리자 상태를 확인하지 못했어요.\nApps Script 배포와 접근 권한을 확인해 주세요.','error')}
+}
+async function action(type,pass=''){
+ const body=new URLSearchParams({action:type,client:clientId()});
+ if(type==='adminLogin')body.set('password',pass);
+ // Apps Script가 다른 도메인이라 POST 응답은 읽지 않고 등록 상태를 별도로 확인합니다.
+ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',body,redirect:'follow'});
+ for(let i=0;i<12;i++){
+  await new Promise(r=>setTimeout(r,1000));
+  try{const registered=await getStatus();if(type==='adminLogin'?registered:!registered)return true}catch(e){}
+ }
+ return false;
+}
+form.addEventListener('submit',async e=>{
+ e.preventDefault();const pass=password.value;password.value='';
+ if(pass.length<12){setStatus('비밀번호는 12자 이상이어야 해요.','error');return}
+ busy(true);setStatus('관리자 등록 확인 중...');
+ try{const ok=await action('adminLogin',pass);setStatus(ok?'✅ 관리자 등록 완료! 이제 HOT 집계에서 제외돼요.':'등록이 확인되지 않았어요. 비밀번호와 Apps Script 설정을 확인해 주세요.',ok?'success':'error')}
+ catch(e){setStatus('등록 요청에 실패했어요. Apps Script 배포 상태를 확인해 주세요.','error')}
+ finally{busy(false)}
+});
+logout.addEventListener('click',async()=>{
+ if(!confirm('이 기기의 관리자 등록을 해제할까요?'))return;
+ busy(true);setStatus('관리자 등록 해제 중...');
+ try{const ok=await action('adminLogout');setStatus(ok?'관리자 등록이 해제됐어요.':'해제가 확인되지 않았어요.','' )}
+ catch(e){setStatus('해제 요청에 실패했어요.','error')}
+ finally{busy(false)}
+});
+refresh();
+})();
+</script>
+</body>
+</html>
