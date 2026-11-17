@@ -25,13 +25,14 @@ function cols(){let w=innerWidth;return w<=600?2:w<=800?3:w<=1100?4:w<=1400?5:6}
 function setPer(){per=cols()*(innerWidth<=600?8:6)}
 function cropFor(p){let s=String(p.id||p.name||"작물"),h=0;for(let c of s)h=(h*31+c.charCodeAt(0))>>>0;return crops[h%crops.length]}
 function productStatuses(p){return parseStatuses(p.statuses||p.status)}
+function isSoldOut(p){return productStatuses(p).includes("soldout")}
 function statusBadges(p){return productStatuses(p).map(s=>`<span class="status-badge ${s}">${esc(statusText(s))}</span>`).join("")}
 function statusText(s){let x=SETTINGS.statuses.find(x=>x.value===s);return x?x.label:({selling:"판매중",soldout:"판매완료",unavailable:"미판매",set:"세트판매"}[s]||s)}
 function dr(p){let v=p.discount??p.discountRate??p.discount_rate??0;if(typeof v==="string")v=v.replace("%","");return Math.max(0,Math.min(100,Number(v)||0))}
 function sale(p){return Number((Number(p.price||0)*(1-dr(p)/100)).toFixed(10))}
-function price(p){if(productStatuses(p).includes("unavailable"))return `<div class="product-price">-</div>`;if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
+function price(p){if(productStatuses(p).some(s=>s==="unavailable"||s==="soldout"))return `<div class="product-price">-</div>`;if(p.price===null||p.price===undefined||p.price==="")return `<div class="product-price">가격문의</div>`;return dr(p)?`<div class="price-row"><span class="discount">${dr(p)}%</span><span class="old-price">${money(p.price)}</span><span class="sale-price">${money(sale(p))}</span></div>`:`<div class="product-price">${money(p.price)}</div>`}
 function isNew(p){let raw=p.date||p.registeredAt||p.registered_at;if(!raw)return false;let d=new Date(String(raw).replace(/\./g,"-")+"T00:00:00");if(isNaN(d))return false;let n=new Date();n.setHours(0,0,0,0);let diff=Math.floor((n-d)/86400000);return diff>=0&&diff<3}
-// 최근 7일 검색 + 검색 결과 상품 클릭 TOP 10
+// HOT: 최근 7일 검색 + 실제 상품 클릭 + 현재 찜 수. 검색만으로 HOT에 오르지 않습니다.
 const hotProductIds=new Set();
 let hotSearchTimer=null;
 const hotSearchDelayMs=1100;
@@ -164,15 +165,23 @@ function filtered(){
   result=candidates.filter(p=>fields(p).some(x=>nearSearch(q,x)));
  const order=$("#sortFilter").value;
  const byName=(a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ko",{numeric:true});
+ // 전체 상태에서도 판매완료와 미판매는 항상 판매중/세트판매 뒤에 표시합니다.
+ // 판매완료와 미판매 사이에는 우선순위를 두지 않고 기존 정렬 기준을 유지합니다.
+ const inactiveRank=p=>productStatuses(p).some(s=>s==="soldout"||s==="unavailable")?1:0;
+ const byStatus=(a,b)=>inactiveRank(a)-inactiveRank(b);
  if(order==="default")return result.sort((a,b)=>
+  byStatus(a,b)||
   (Number(isNew(b))-Number(isNew(a)))||
   (Number(hotProductIds.has(String(b.id)))-Number(hotProductIds.has(String(a.id))))||
   byName(a,b)
  );
  if(order==="mostWished")return result.sort((a,b)=>
+  byStatus(a,b)||
   ((Number(wishCounts[String(b.id)])||0)-(Number(wishCounts[String(a.id)])||0))||byName(a,b)
  );
  return result.sort((a,b)=>{
+  const statusDifference=byStatus(a,b);
+  if(statusDifference)return statusDifference;
   if(a.price==null&&b.price==null)return byName(a,b);
   if(a.price==null)return 1;
   if(b.price==null)return -1;
@@ -242,8 +251,9 @@ function syncWishChange(id,selected){
  if(!wishlistEndpoint)return;
  // 동일 상품을 빠르게 여러 번 누른 경우에도 서버 요청 순서 유지.
  const prev=wishlistQueues.get(id)||wishlistInitialSync;
- const next=prev.catch(()=>{}).then(()=>wishJsonp({action:"set",client:wishClientId(),id,selected:selected?1:0}))
-  .then(data=>{if(data.id===id)updateWishCount(id,data.count)})
+ const next=prev.catch(()=>{}).then(()=>wishJsonp({action:"set",client:wishClientId(),id,selected:selected?1:0,
+  name:String(P.find(p=>String(p.id)===String(id))?.name||"").slice(0,80)}))
+  .then(data=>{if(data.id===id)updateWishCount(id,data.count);queueHotRefresh()})
   .catch(error=>console.warn("[당그니네 밭] 찜 수 갱신 지연:",error.message));
  wishlistQueues.set(id,next);
  next.finally(()=>{if(wishlistQueues.get(id)===next)wishlistQueues.delete(id)});
@@ -403,19 +413,19 @@ async function startWishCounts(){
 
 
 function saveFav(){localStorage.setItem("dangniFavs",JSON.stringify([...F]));$("#favoriteCount").textContent=F.size}
-function toggle(id){F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
-function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p,false)}<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button><div class="product-image">${media(p)}${photoPickBadge(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${displayTags(p).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
-document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]")){const p=P.find(x=>String(x.id)===c.dataset.id);if(p&&searchKey($("#searchInput").value).length>=2)sendHotEvent("click",[{id:String(p.id),name:String(p.name||"")}],searchKey($("#searchInput").value));openDetail(c.dataset.id)}});
+function toggle(id){const p=P.find(x=>String(x.id)===String(id));if(!F.has(id)&&p&&isSoldOut(p))return;F.has(id)?F.delete(id):F.add(id);saveFav();render();syncWishChange(id,F.has(id))}
+function render(){let a=filtered(),pages=Math.max(1,Math.ceil(a.length/per));page=Math.min(page,pages);$("#resultCount").textContent=a.length.toLocaleString();let list=a.slice((page-1)*per,page*per);$("#emptyState").classList.toggle("hidden",!!list.length);$("#products").innerHTML=list.map(p=>`<article class="product-card" data-id="${esc(p.id)}">${badges(p,false)}${isSoldOut(p)?"":`<button aria-label="${F.has(p.id)?"바구니에서 빼기":"바구니에 담기"}" aria-pressed="${F.has(p.id)}" class="heart wish-basket-stack ${F.has(p.id)?"faved":""}" data-f="${esc(p.id)}">${wishCountHtml(p.id)}<span class="basket-emoji" aria-hidden="true">🧺</span></button>`}<div class="product-image">${media(p)}${photoPickBadge(p)}</div><div class="product-info"><div class="status-group">${statusBadges(p)}</div><div class="product-name">${esc(p.name)}</div>${price(p)}<div class="tags">${displayTags(p).slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div></div></article>`).join("");
+document.querySelectorAll("[data-f]").forEach(b=>b.onclick=e=>{e.stopPropagation();toggle(b.dataset.f)});document.querySelectorAll(".product-card").forEach(c=>c.onclick=e=>{if(!e.target.closest("[data-f]")){const p=P.find(x=>String(x.id)===c.dataset.id);if(p)sendHotEvent("click",[{id:String(p.id),name:String(p.name||"")}],searchKey($("#searchInput").value));openDetail(c.dataset.id)}});
 let available=document.querySelector(".products-area").clientWidth||Math.max(180,innerWidth-80);let count=Math.max(1,Math.min(10,Math.floor((available+4)/40)-4));let s=Math.max(1,page-Math.floor((count-1)/2)),e=Math.min(pages,s+count-1);s=Math.max(1,e-count+1);
 const pb=(n,label,aria,disabled=false)=>`<button data-p="${n}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
 $("#pagination").innerHTML=`<div class="page-summary">${page} / ${pages} 페이지 · 한 페이지에 ${per}개 작물</div><div class="page-buttons">`+pb(1,'&lt;','첫 페이지로 이동',page===1)+Array.from({length:e-s+1},(_,i)=>s+i).map(n=>`<button class="${n===page?"on":""}" data-p="${n}" aria-label="${n} 페이지" ${n===page?'aria-current="page"':''}>${n}</button>`).join("")+pb(pages,'&gt;','마지막 페이지로 이동',page===pages)+`</div><form class="page-jump" id="pageJump"><label for="pageNumber">페이지 바로 가기</label><input id="pageNumber" type="number" inputmode="numeric" min="1" max="${pages}" value="${page}" aria-label="이동할 페이지 번호" required><button type="submit">이동</button></form>`;
 const go=n=>{page=Math.max(1,Math.min(pages,n));render();scrollTo({top:Math.max(0,document.querySelector(".shop-toolbar").offsetTop-24),behavior:"smooth"})};
 document.querySelectorAll("#pagination [data-p]").forEach(b=>b.onclick=()=>go(+b.dataset.p));$("#pageJump").onsubmit=ev=>{ev.preventDefault();const n=Number($("#pageNumber").value);if(Number.isInteger(n)&&n>=1&&n<=pages)go(n)};}
 
-function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=displayTags(p).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;let fav=()=>{$("#modalFavorite").textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();$("#modalFavorite").onclick=()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
+function openDetail(id){let p=P.find(x=>x.id===id);if(!p)return;$("#modalImage").innerHTML=media(p);$("#modalName").textContent=p.name;$("#modalStatus").className="status-group";$("#modalStatus").innerHTML=statusBadges(p);$("#modalPrice").innerHTML=price(p);$("#modalTags").innerHTML=displayTags(p).map(t=>`<span class="tag">#${esc(t)}</span>`).join("");$("#modalId").textContent=p.id||"";$("#modalCategory").textContent=p.category||"";$("#modalDate").textContent=p.date||"";renderDetailContent(p);$("#modalBadges").innerHTML=badges(p);$("#modalContact").href=p.kakao||SETTINGS.kakaoUrl;const modalBasket=$("#modalFavorite");modalBasket.style.display=isSoldOut(p)?"none":"";let fav=()=>{modalBasket.textContent=F.has(id)?"🧺 바구니에서 빼기":"🧺 바구니에 담기"};fav();modalBasket.onclick=isSoldOut(p)?null:()=>{toggle(id);fav()};$("#productModal").classList.remove("hidden");document.body.style.overflow="hidden"}
 // 바구니의 가격 표시는 상품 카드와 동일하게 할인 적용 후 가격을 사용합니다.
 function basketPriceText(p){
- if(productStatuses(p).includes("unavailable"))return "-";
+ if(productStatuses(p).some(s=>s==="unavailable"||s==="soldout"))return "-";
  if(p.price===null||p.price===undefined||String(p.price).trim()==="")return "가격문의";
  const amount=dr(p)?sale(p):Number(p.price);
  return Number.isFinite(amount)?money(amount):String(p.price);
@@ -424,13 +434,27 @@ function showFav(){let a=P.filter(p=>F.has(p.id));$("#favoriteList").innerHTML=a
 async function inquire(){
  const items=P.filter(p=>F.has(p.id)&&p.name),h=$("#copyHint");
  if(!items.length){h.textContent="바구니에 담긴 작물이 없어요 🌱";return}
- const t=items.map(p=>`${p.name} ${basketPriceText(p)}`).join("\n");
+ let t=items.map(p=>`${p.name} ${basketPriceText(p)}`).join("\n");
+ // 서버가 기준 시점에 확정한 쿠폰 대상자에게만 문구를 붙입니다.
+ // 쿠폰 금액은 자동으로 차감하지 않으며, 실제 할인은 판매자가 확인합니다.
+ if(wishlistEndpoint){
+  try{
+   const coupon=await wishJsonp({action:"coupon",client:wishClientId()});
+   if(coupon.eligible&&coupon.code){
+    t+=`\n\n🎟️ 장바구니 보유 고객 30% 할인쿠폰\n쿠폰코드: ${coupon.code}\n※ 할인은 판매자 확인 후 적용`;
+   }
+  }catch(error){
+   console.warn("[당그니네 밭] 쿠폰 대상 확인 지연:",error.message);
+   h.textContent="쿠폰 대상 확인이 지연되고 있어요. 잠시 후 다시 문의해 주세요.";
+   return;
+  }
+ }
  try{await navigator.clipboard.writeText(t)}catch(e){
   const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();
   const copied=document.execCommand("copy");x.remove();
   if(!copied){h.textContent="복사에 실패했어요. 다시 눌러주세요.";return}
  }
- h.textContent=`${items.length}개 작물명과 가격이 복사됐어요!`;
+ h.textContent=`${items.length}개 작물명·가격${t.includes("쿠폰코드:")?"·30% 쿠폰":""}이 복사됐어요!`;
  setTimeout(()=>location.href=SETTINGS.kakaoUrl,350);
 }
 function clearBasket(){
